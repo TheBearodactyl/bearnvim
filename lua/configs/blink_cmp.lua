@@ -71,34 +71,52 @@ return config.create({
 		},
 
 		completion = {
-			accept = { auto_brackets = { enabled = true } },
+			accept = {
+				auto_brackets = {
+					enabled = true,
+					default_brackets = {
+						"(",
+						")",
+					},
+				},
+			},
 			menu = {
 				draw = {
 					treesitter = { "lsp" },
 					columns = {
-						{ "label", "label_description", gap = 1 },
-						{ "kind_icon", "kind" },
+						{ "kind_icon", "label", "label_description", gap = 2 },
+						{ "kind", gap = 1 },
 					},
 				},
+				border = "rounded",
+				scrollbar = true,
 			},
 			documentation = {
 				auto_show = true,
 				auto_show_delay_ms = 250,
 			},
 			ghost_text = {
-				enabled = false,
+				enabled = true,
+			},
+			list = {
+				max_items = 10,
 			},
 		},
 
 		signature = {
 			enabled = true,
+			trigger = {
+				enabled = true,
+			},
 		},
 	},
 
 	setup = function(opts)
 		local blink = require("blink.cmp")
-		blink.setup(opts)
 
+		vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#818589", italic = true })
+
+		blink.setup(opts)
 		keys.register({
 			keys.group("<leader>c", "[C]ode"),
 			{ "<C-Space>", desc = "Show Completion", mode = "i" },
@@ -110,26 +128,4 @@ return config.create({
 			{ "<S-Tab>", desc = "Previous Snippet", mode = "i" },
 		})
 	end,
-
-	autocmds = {
-		{
-			event = "FileType",
-			pattern = { "markdown", "text" },
-			callback = function()
-				local blink = require("blink.cmp")
-				if blink and blink.setup then
-				end
-			end,
-		},
-	},
-
-	commands = {
-		BlinkToggle = {
-			callback = function()
-				local blink = require("blink.cmp")
-				vim.notify("Blink completion toggled")
-			end,
-			opts = { desc = "Toggle Blink completion" },
-		},
-	},
 })

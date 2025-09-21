@@ -12,10 +12,10 @@ return {
 
 	plugin.spec({
 		"mrcjkb/rustaceanvim",
-		version = "^6",
+		version = "6.9.2",
 		lazy = false,
 		ft = { "rust" },
-		setup = require("configs.rustaceanvim").setup,
 		opts = require("configs.rustaceanvim").options,
+		keys = require("configs.rustaceanvim").keys,
 	}),
 }

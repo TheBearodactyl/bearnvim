@@ -113,4 +113,32 @@ return config.create({
 			{ "<leader>fgh", "<cmd>Telescope git_stash<cr>", desc = "[F]ind [G]it Stas[h]" },
 		})
 	end,
+
+	commands = {
+		ListHighlightGroups = {
+			callback = function()
+				local groups = vim.fn.getcompletion("", "highlight")
+				local buf = vim.api.nvim_create_buf(false, true)
+
+				vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+				vim.api.nvim_buf_set_lines(buf, 0, -1, false, groups)
+
+				local width = math.floor(vim.o.columns * 0.4)
+				local height = math.floor(vim.o.lines * 0.6)
+				local row = math.floor((vim.o.lines - height) / 2)
+				local col = math.floor((vim.o.columns - width) / 2)
+
+				vim.api.nvim_open_win(buf, true, {
+					relative = "editor",
+					row = row,
+					col = col,
+					width = width,
+					height = height,
+					style = "minimal",
+					border = "rounded",
+				})
+			end,
+			opts = { desc = "List all available highlight groups" },
+		},
+	},
 })

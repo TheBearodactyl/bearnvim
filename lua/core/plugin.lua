@@ -30,6 +30,12 @@ local M = {}
 ---@param spec PluginSpec
 ---@return PluginSpec
 function M.spec(spec)
+	-- Don't override existing config or setup
+	if spec.config or spec.main then
+		return spec
+	end
+
+	-- Handle setup function properly
 	if spec.setup and not spec.config then
 		local setup_fn = spec.setup
 		spec.config = function(_, opts)
@@ -38,14 +44,25 @@ function M.spec(spec)
 		spec.setup = nil
 	end
 
-	if spec.opts and not spec.config and not spec.main and not spec.setup then
+	-- Auto-config based on plugin name only if no config exists
+	if spec.opts and not spec.config and not spec.main then
 		local plugin_name = spec.name or spec[1]:match("([^/]+)$"):gsub("%.nvim$", ""):gsub("^nvim%-", "")
 		local config_path = "configs." .. plugin_name:gsub("%-", "_")
 
 		spec.config = function(_, opts)
 			local ok, config_module = pcall(require, config_path)
-			if ok and config_module and config_module.setup then
-				config_module.setup(opts)
+			if ok and config_module then
+				if type(config_module.setup) == "function" then
+					config_module.setup(opts)
+				elseif type(config_module) == "function" then
+					config_module(opts)
+				end
+			else
+				-- Fallback: try to call setup on the plugin directly
+				local plugin_ok, plugin_module = pcall(require, plugin_name)
+				if plugin_ok and plugin_module and plugin_module.setup then
+					plugin_module.setup(opts)
+				end
 			end
 		end
 	end
@@ -62,6 +79,7 @@ function M.lsp(name, opts)
 		"neovim/nvim-lspconfig",
 		ft = opts and opts.filetypes or nil,
 		opts = function(_, plugin_opts)
+			plugin_opts = plugin_opts or {}
 			plugin_opts.servers = plugin_opts.servers or {}
 			plugin_opts.servers[name] = opts or {}
 			return plugin_opts

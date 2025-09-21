@@ -106,123 +106,63 @@ return config.create({
 						desc = "[D]ebug [R]ust",
 					},
 					{
-						"<leader>rr",
+						"<leader>Rr",
 						function()
 							vim.cmd.RustLsp("runnables")
 						end,
 						desc = "[R]ust [R]unnables",
 					},
 					{
-						"<leader>rt",
+						"<leader>Rt",
 						function()
 							vim.cmd.RustLsp("testables")
 						end,
 						desc = "[R]ust [T]estables",
 					},
 					{
-						"<leader>rm",
+						"<leader>Rm",
 						function()
 							vim.cmd.RustLsp("expandMacro")
 						end,
 						desc = "[R]ust Expand [M]acro",
 					},
 					{
-						"<leader>rc",
+						"<leader>Rc",
 						function()
 							vim.cmd.RustLsp("openCargo")
 						end,
 						desc = "[R]ust Open [C]argo.toml",
 					},
 					{
-						"<leader>rp",
+						"<leader>Rp",
 						function()
 							vim.cmd.RustLsp("parentModule")
 						end,
 						desc = "[R]ust [P]arent Module",
 					},
 					{
-						"<leader>rd",
+						"<leader>Rd",
 						function()
 							vim.cmd.RustLsp("openDocs")
 						end,
 						desc = "[R]ust Open [D]ocs",
 					},
 					{
-						"<leader>re",
+						"<leader>Re",
 						function()
 							vim.cmd.RustLsp("explainError")
 						end,
 						desc = "[R]ust [E]xplain Error",
 					},
 					{
-						"<leader>rR",
-						function()
-							vim.cmd.RustLsp("reload")
-						end,
-						desc = "[R]ust [R]eload Workspace",
-					},
-				})
-
-				keys.register({
-					keys.group("<leader>r", "[R]ust"),
-					{
-						"<leader>rr",
-						function()
-							vim.cmd.RustLsp("runnables")
-						end,
-						desc = "[R]ust [R]unnables",
-					},
-					{
-						"<leader>rt",
-						function()
-							vim.cmd.RustLsp("testables")
-						end,
-						desc = "[R]ust [T]estables",
-					},
-					{
-						"<leader>rd",
-						function()
-							vim.cmd.RustLsp("debuggables")
-						end,
-						desc = "[R]ust [D]ebuggables",
-					},
-					{
-						"<leader>rm",
-						function()
-							vim.cmd.RustLsp("expandMacro")
-						end,
-						desc = "[R]ust Expand [M]acro",
-					},
-					{
-						"<leader>rc",
-						function()
-							vim.cmd.RustLsp("openCargo")
-						end,
-						desc = "[R]ust Open [C]argo.toml",
-					},
-					{
-						"<leader>rp",
-						function()
-							vim.cmd.RustLsp("parentModule")
-						end,
-						desc = "[R]ust [P]arent Module",
-					},
-					{
-						"<leader>re",
-						function()
-							vim.cmd.RustLsp("explainError")
-						end,
-						desc = "[R]ust [E]xplain Error",
-					},
-					{
-						"<leader>rg",
+						"<leader>Rg",
 						function()
 							vim.cmd.RustLsp("crateGraph")
 						end,
 						desc = "[R]ust Crate [G]raph",
 					},
 					{
-						"<leader>rR",
+						"<leader>RR",
 						function()
 							vim.cmd.RustLsp("reload")
 						end,
@@ -239,15 +179,10 @@ return config.create({
 							enable = true,
 						},
 					},
-					checkOnSave = {
-						allFeatures = true,
-						command = "clippy",
-						extraArgs = { "--no-deps" },
-					},
+					checkOnSave = true,
 					procMacro = {
 						enable = true,
 						ignored = {
-							["async-trait"] = { "async_trait" },
 							["napi-derive"] = { "napi" },
 							["async-recursion"] = { "async_recursion" },
 						},
@@ -296,7 +231,17 @@ return config.create({
 		},
 	},
 
-	setup = function(opts)
-		vim.g.rustaceanvim = opts
-	end,
+	keys = {
+		{ "<leader>R", group = "[R]ust" },
+		{ "<leader>Rr", desc = "[R]ust [R]unnables" },
+		{ "<leader>Rt", desc = "[R]ust [T]estables" },
+		{ "<leader>Rd", desc = "[R]ust Open [D]ocs" },
+		{ "<leader>Rm", desc = "[R]ust Expand [M]acro" },
+		{ "<leader>Rc", desc = "[R]ust Open [C]argo.toml" },
+		{ "<leader>Rp", desc = "[R]ust [P]arent Module" },
+		{ "<leader>Re", desc = "[R]ust [E]xplain Error" },
+		{ "<leader>Rg", desc = "[R]ust Crate [G]raph" },
+		{ "<leader>RR", desc = "[R]ust [R]eload Workspace" },
+		{ "<leader>dr", desc = "[D]ebug [R]ust" },
+	},
 })

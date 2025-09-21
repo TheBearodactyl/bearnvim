@@ -4,6 +4,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 local options = {
+	-- Editor
 	mouse = "a",
 	clipboard = "unnamedplus",
 	swapfile = true,
@@ -13,6 +14,8 @@ local options = {
 	undolevels = 10000,
 	updatetime = 250,
 	timeoutlen = 300,
+
+	-- Display
 	number = true,
 	relativenumber = true,
 	cursorline = true,
@@ -24,6 +27,8 @@ local options = {
 	showmode = false,
 	conceallevel = 2,
 	pumheight = 10,
+
+	-- Indentation
 	tabstop = 4,
 	shiftwidth = 4,
 	expandtab = true,
@@ -31,19 +36,37 @@ local options = {
 	smartindent = true,
 	breakindent = true,
 	linebreak = true,
+
+	-- Search
 	ignorecase = true,
 	smartcase = true,
 	inccommand = "split",
+
+	-- Splits
 	splitright = true,
 	splitbelow = true,
+
+	-- Completion
 	completeopt = "menu,menuone,noselect",
+
+	-- Performance
 	lazyredraw = false,
 	synmaxcol = 240,
 }
 
-function M.setup()
-	for option, value in pairs(options) do
-		vim.opt[option] = value
+---Apply options
+---@param opts? table Optional override options
+function M.setup(opts)
+	opts = vim.tbl_deep_extend("force", options, opts or {})
+
+	for option, value in pairs(opts) do
+		local success, err = pcall(function()
+			vim.opt[option] = value
+		end)
+
+		if not success then
+			vim.notify(string.format("Failed to set option '%s': %s", option, err), vim.log.levels.WARN)
+		end
 	end
 
 	vim.g.loaded_netrw = 1
@@ -54,77 +77,145 @@ function M.setup()
 	M.setup_keymaps()
 end
 
+---Setup core autocommands
 function M.setup_autocmds()
 	local augroup = vim.api.nvim_create_augroup("CoreOptions", { clear = true })
 
-	vim.api.nvim_create_autocmd("TextYankPost", {
-		group = augroup,
-		desc = "Highlight when yanking text",
-		callback = function()
-			vim.highlight.on_yank({ timeout = 200 })
-		end,
-	})
-
-	vim.api.nvim_create_autocmd("BufReadPost", {
-		group = augroup,
-		desc = "Restore cursor position",
-		callback = function()
-			local mark = vim.api.nvim_buf_get_mark(0, '"')
-			local lcount = vim.api.nvim_buf_line_count(0)
-			if mark[1] > 0 and mark[1] <= lcount then
-				pcall(vim.api.nvim_win_set_cursor, 0, mark)
-			end
-		end,
-	})
-
-	vim.api.nvim_create_autocmd("BufWritePre", {
-		group = augroup,
-		desc = "Auto create directories",
-		callback = function(event)
-			if event.match:match("^%w%w+://") then
-				return
-			end
-			local file = vim.loop.fs_realpath(event.match) or event.match
-			vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
-		end,
-	})
-
-	vim.api.nvim_create_autocmd("FileType", {
-		group = augroup,
-		pattern = {
-			"qf",
-			"help",
-			"man",
-			"notify",
-			"lspinfo",
-			"checkhealth",
+	local autocmds = {
+		{
+			event = "TextYankPost",
+			desc = "Highlight when yanking text",
+			callback = function()
+				pcall(vim.highlight.on_yank, { timeout = 200 })
+			end,
 		},
-		callback = function(event)
-			vim.bo[event.buf].buflisted = false
-			vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
-		end,
-	})
+		{
+			event = "BufReadPost",
+			desc = "Restore cursor position",
+			callback = function()
+				local mark = vim.api.nvim_buf_get_mark(0, '"')
+				local lcount = vim.api.nvim_buf_line_count(0)
+				if mark[1] > 0 and mark[1] <= lcount then
+					pcall(vim.api.nvim_win_set_cursor, 0, mark)
+				end
+			end,
+		},
+		{
+			event = "BufWritePre",
+			desc = "Auto create directories",
+			callback = function(event)
+				if event.match:match("^%w%w+://") then
+					return
+				end
+				local file = (vim.uv or vim.loop).fs_realpath(event.match) or event.match
+				local dir = vim.fn.fnamemodify(file, ":p:h")
+				if vim.fn.isdirectory(dir) == 0 then
+					vim.fn.mkdir(dir, "p")
+				end
+			end,
+		},
+		{
+			event = "FileType",
+			pattern = {
+				"qf",
+				"help",
+				"man",
+				"notify",
+				"lspinfo",
+				"checkhealth",
+				"lazy",
+				"mason",
+				"null-ls-info",
+			},
+			callback = function(event)
+				vim.bo[event.buf].buflisted = false
+				vim.keymap.set("n", "q", "<cmd>close<cr>", {
+					buffer = event.buf,
+					silent = true,
+					desc = "Close window",
+				})
+			end,
+		},
+	}
+
+	for _, autocmd in ipairs(autocmds) do
+		local success, err = pcall(function()
+			vim.api.nvim_create_autocmd(autocmd.event, {
+				group = augroup,
+				pattern = autocmd.pattern,
+				callback = autocmd.callback,
+				desc = autocmd.desc,
+			})
+		end)
+
+		if not success then
+			vim.notify(
+				string.format("Failed to create autocmd '%s': %s", autocmd.desc or "unknown", err),
+				vim.log.levels.WARN
+			)
+		end
+	end
 end
 
+---Setup core keymaps
 function M.setup_keymaps()
-	local map = vim.keymap.set
+	local keymaps = {
+		{ "i", "jk", "<ESC>", "Escape insert mode" },
+		{ "i", "kj", "<ESC>", "Escape insert mode" },
 
-	map("i", "jk", "<ESC>", { desc = "Escape insert mode" })
-	map("i", "kj", "<ESC>", { desc = "Escape insert mode" })
-	map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
-	map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-	map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-	map("v", "<", "<gv", { desc = "Indent left" })
-	map("v", ">", ">gv", { desc = "Indent right" })
-	map("v", "p", '"_dP', { desc = "Paste without yanking" })
-	map("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
-	map("n", "[q", vim.cmd.cprev, { desc = "Previous quickfix" })
-	map("n", "]l", vim.cmd.lnext, { desc = "Next loclist" })
-	map("n", "[l", vim.cmd.lprev, { desc = "Previous loclist" })
-	map("n", "]b", vim.cmd.bnext, { desc = "Next buffer" })
-	map("n", "[b", vim.cmd.bprev, { desc = "Previous buffer" })
-	map("n", "]t", vim.cmd.tabnext, { desc = "Next tab" })
-	map("n", "[t", vim.cmd.tabprev, { desc = "Previous tab" })
+		{ "n", "<Esc>", "<cmd>nohlsearch<CR>", "Clear search highlights" },
+
+		{ { "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", "Move down", { expr = true, silent = true } },
+		{ { "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", "Move up", { expr = true, silent = true } },
+
+		{ "v", "<", "<gv", "Indent left" },
+		{ "v", ">", ">gv", "Indent right" },
+		{ "v", "p", '"_dP', "Paste without yanking" },
+
+		{ "n", "]q", vim.cmd.cnext, "Next quickfix" },
+		{ "n", "[q", vim.cmd.cprev, "Previous quickfix" },
+		{ "n", "]l", vim.cmd.lnext, "Next loclist" },
+		{ "n", "[l", vim.cmd.lprev, "Previous loclist" },
+		{ "n", "]b", vim.cmd.bnext, "Next buffer" },
+		{ "n", "[b", vim.cmd.bprev, "Previous buffer" },
+		{ "n", "]t", vim.cmd.tabnext, "Next tab" },
+		{ "n", "[t", vim.cmd.tabprev, "Previous tab" },
+
+		{ "n", "<leader>cr", vim.lsp.buf.rename, "Rename Symbol" },
+	}
+
+	for _, keymap in ipairs(keymaps) do
+		local success, err = pcall(function()
+			local modes, key, cmd, desc, opts = keymap[1], keymap[2], keymap[3], keymap[4], keymap[5] or {}
+			opts.desc = opts.desc or desc
+			vim.keymap.set(modes, key, cmd, opts)
+		end)
+
+		if not success then
+			vim.notify(string.format("Failed to set keymap '%s': %s", keymap[2] or "unknown", err), vim.log.levels.WARN)
+		end
+	end
+end
+
+--- Utility function for setting highlights
+--- @param ns integer Namespace ID (use 0 for global)
+--- @param name string Name of the highlight group
+--- @param opts table Highlight options
+function M.highlight(ns, name, opts)
+	if type(ns) ~= "number" then
+		error("Namespace must be a number", 2)
+	end
+	if type(name) ~= "string" or name == "" then
+		error("Name must be a non-empty string", 2)
+	end
+	if type(opts) ~= "table" then
+		error("Options must be a table", 2)
+	end
+
+	local success, err = pcall(vim.api.nvim_set_hl, ns, name, opts)
+	if not success then
+		vim.notify(string.format("Failed to set highlight '%s': %s", name, err), vim.log.levels.WARN)
+	end
 end
 
 M.setup()

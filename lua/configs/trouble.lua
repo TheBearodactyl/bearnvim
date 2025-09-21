@@ -3,46 +3,34 @@ local keys = require("core.keys")
 
 return config.create({
 	options = {
-		dir = vim.fn.stdpath("state") .. "/sessions/",
-		options = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" },
-		pre_save = nil,
-		post_save = nil,
-		save_empty = false,
+		modes = {
+			test = {
+				mode = "diagnostics",
+				preview = {
+					type = "split",
+					relative = "win",
+					position = "right",
+					size = 0.3,
+				},
+			},
+		},
 	},
 
 	setup = function(opts)
-		require("persistence").setup(opts)
+		require("trouble").setup(opts)
 
 		keys.register({
-			keys.group("<leader>q", "[Q]uit / Session"),
+			keys.group("<leader>x", "Trouble"),
+			{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+			{ "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
+			{ "<leader>cs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
 			{
-				"<leader>qs",
-				function()
-					require("persistence").save()
-				end,
-				desc = "[Q]uit [S]ave Session",
+				"<leader>cl",
+				"<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+				desc = "LSP Definitions / references / ... (Trouble)",
 			},
-			{
-				"<leader>qr",
-				function()
-					require("persistence").load()
-				end,
-				desc = "[Q]uit [R]estore Session",
-			},
-			{
-				"<leader>qR",
-				function()
-					require("persistence").load({ last = true })
-				end,
-				desc = "[Q]uit [R]estore Last Session",
-			},
-			{
-				"<leader>qd",
-				function()
-					require("persistence").stop()
-				end,
-				desc = "[Q]uit [D]on't Save Current Session",
-			},
+			{ "<leader>xL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
+			{ "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
 		})
 	end,
 })

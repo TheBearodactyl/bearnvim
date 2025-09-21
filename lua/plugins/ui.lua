@@ -46,7 +46,7 @@ return {
 		"catppuccin/nvim",
 		name = "catppuccin",
 		setup = function()
-			vim.cmd.colorscheme("catppuccin-macchiato")
+			vim.cmd.colorscheme("catppuccin-mocha")
 		end,
 	}),
 
@@ -69,4 +69,7 @@ return {
 		"j-hui/fidget.nvim",
 		opts = require("configs.fidget").options,
 	}),
+
+	plugin.spec({ "rktjmp/lush.nvim" }),
+	plugin.spec({ "rktjmp/shipwright.nvim" }),
 }

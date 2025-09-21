@@ -24,7 +24,7 @@ function M.setup()
 			{ import = "plugins" },
 		},
 		defaults = {
-			lazy = false,
+			lazy = false, -- Keep this false for reliability
 			version = false,
 		},
 		install = {
@@ -64,7 +64,7 @@ function M.setup()
 				init = " ",
 				import = " ",
 				keys = " ",
-				lazy = "󰒲 ",
+				lazy = "💤 ",
 				loaded = "●",
 				not_loaded = "○",
 				plugin = " ",

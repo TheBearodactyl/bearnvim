@@ -15,4 +15,9 @@ return {
 		setup = require("configs.persistence").setup,
 		opts = require("configs.persistence").options,
 	}),
+
+	plugin.spec({
+		"nvim-tree/nvim-tree.lua",
+		opts = require("configs.nvim_tree").options,
+	}),
 }
