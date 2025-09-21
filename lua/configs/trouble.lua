@@ -33,4 +33,14 @@ return config.create({
 			{ "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
 		})
 	end,
+
+	keys = {
+		{ "<leader>x", group = "Trouble" },
+		{ "<leader>xx", desc = "Diagnostics (Trouble)" },
+		{ "<leader>xX", desc = "Buffer Diagnostics (Trouble)" },
+		{ "<leader>cs", desc = "Symbols (Trouble)" },
+		{ "<leader>cl", desc = "LSP Definitions / references / ... (Trouble)" },
+		{ "<leader>xL", desc = "Location List (Trouble)" },
+		{ "<leader>xQ", desc = "Quickfix List (Trouble)" },
+	},
 })

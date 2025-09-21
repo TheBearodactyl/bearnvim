@@ -63,11 +63,18 @@ return {
 		cmd = "Trouble",
 		setup = require("configs.trouble").setup,
 		opts = require("configs.trouble").options,
+		keys = require("configs.trouble").keys,
 	}),
 
 	plugin.spec({
 		"j-hui/fidget.nvim",
 		opts = require("configs.fidget").options,
+	}),
+
+	plugin.spec({
+		"goolord/alpha-nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = require("configs.alpha").setup,
 	}),
 
 	plugin.spec({ "rktjmp/lush.nvim" }),
