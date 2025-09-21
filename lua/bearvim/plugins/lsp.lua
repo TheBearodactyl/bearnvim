@@ -22,8 +22,9 @@ return {
 	}),
 
 	plugin.spec({
-		"folke/trouble.nvim",
+		"smjonas/inc-rename.nvim",
 		opts = {},
-		cmd = "Trouble",
+		keys = require("bearvim.configs.inc_rename").keys,
+		setup = require("bearvim.configs.inc_rename").setup,
 	}),
 }

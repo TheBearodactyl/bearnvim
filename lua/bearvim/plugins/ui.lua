@@ -77,6 +77,17 @@ return {
 		config = require("bearvim.configs.alpha").setup,
 	}),
 
+	plugin.spec({
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		opts = require("bearvim.configs.noice").options,
+		setup = require("bearvim.configs.noice").setup,
+	}),
+
 	plugin.spec({ "rktjmp/lush.nvim" }),
 	plugin.spec({ "rktjmp/shipwright.nvim" }),
 }
