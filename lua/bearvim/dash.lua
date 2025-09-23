@@ -9,6 +9,9 @@ local function random_image()
 		"bearvim.images.truth-nuke",
 		"bearvim.images.morris",
 		"bearvim.images.lemon",
+		"bearvim.images.rat",
+		"bearvim.images.rat2",
+		"bearvim.images.dawgs",
 	}
 
 	local choice = image_modules[math.random(#image_modules)]
