@@ -4,7 +4,16 @@ local keys = require("bearvim.core.keys")
 return config.create({
 	options = {
 		dir = vim.fn.stdpath("state") .. "/sessions/",
-		options = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" },
+		options = {
+			"buffers",
+			"curdir",
+			"tabpages",
+			"winsize",
+			"help",
+			"globals",
+			"skiprtp",
+			"folds",
+		},
 		pre_save = nil,
 		post_save = nil,
 		save_empty = false,

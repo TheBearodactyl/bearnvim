@@ -1,5 +1,5 @@
-local plugin = require("bearvim.core.plugin")
 local keys = require("bearvim.core.keys")
+local plugin = require("bearvim.core.plugin")
 
 return {
 	plugin.spec({

@@ -1,4 +1,3 @@
-stynax = "Lua54"
 column_width = 80
 line_endings = "Windows"
 indent_type = "Tabs"

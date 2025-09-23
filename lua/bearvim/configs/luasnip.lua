@@ -35,7 +35,9 @@ return config.create({
 
 		local custom_snippets_path = vim.fn.stdpath("config") .. "/snippets"
 		if vim.fn.isdirectory(custom_snippets_path) == 1 then
-			require("luasnip.loaders.from_vscode").lazy_load({ paths = { custom_snippets_path } })
+			require("luasnip.loaders.from_vscode").lazy_load({
+				paths = { custom_snippets_path },
+			})
 		end
 
 		keys.register({
@@ -70,9 +72,7 @@ return config.create({
 			{
 				"<C-l>",
 				function()
-					if luasnip.choice_active() then
-						luasnip.change_choice(1)
-					end
+					if luasnip.choice_active() then luasnip.change_choice(1) end
 				end,
 				desc = "Next Choice",
 				mode = "i",

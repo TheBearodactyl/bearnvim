@@ -68,23 +68,59 @@ return config.create({
 
 			{ "<leader>bb", "<cmd>BufferPick<cr>", desc = "[B]uffer Pick" },
 			{ "<leader>bc", "<cmd>BufferClose<cr>", desc = "[B]uffer [C]lose" },
-			{ "<leader>bC", "<cmd>BufferClose!<cr>", desc = "[B]uffer [C]lose (Force)" },
+			{
+				"<leader>bC",
+				"<cmd>BufferClose!<cr>",
+				desc = "[B]uffer [C]lose (Force)",
+			},
 			{ "<leader>bd", "<cmd>BufferClose<cr>", desc = "[B]uffer [D]elete" },
-			{ "<leader>bD", "<cmd>BufferClose!<cr>", desc = "[B]uffer [D]elete (Force)" },
+			{
+				"<leader>bD",
+				"<cmd>BufferClose!<cr>",
+				desc = "[B]uffer [D]elete (Force)",
+			},
 
 			{ "<leader>bn", "<cmd>BufferNext<cr>", desc = "[B]uffer [N]ext" },
 			{ "<leader>bp", "<cmd>BufferPrevious<cr>", desc = "[B]uffer [P]revious" },
 			{ "<leader>b>", "<cmd>BufferMoveNext<cr>", desc = "[B]uffer Move Next" },
-			{ "<leader>b<", "<cmd>BufferMovePrevious<cr>", desc = "[B]uffer Move Previous" },
+			{
+				"<leader>b<",
+				"<cmd>BufferMovePrevious<cr>",
+				desc = "[B]uffer Move Previous",
+			},
 
-			{ "<leader>bo", "<cmd>BufferOrderByBufferNumber<cr>", desc = "[B]uffer [O]rder by Number" },
-			{ "<leader>bl", "<cmd>BufferOrderByLanguage<cr>", desc = "[B]uffer Order by [L]anguage" },
-			{ "<leader>bw", "<cmd>BufferOrderByWindowNumber<cr>", desc = "[B]uffer Order by [W]indow" },
+			{
+				"<leader>bo",
+				"<cmd>BufferOrderByBufferNumber<cr>",
+				desc = "[B]uffer [O]rder by Number",
+			},
+			{
+				"<leader>bl",
+				"<cmd>BufferOrderByLanguage<cr>",
+				desc = "[B]uffer Order by [L]anguage",
+			},
+			{
+				"<leader>bw",
+				"<cmd>BufferOrderByWindowNumber<cr>",
+				desc = "[B]uffer Order by [W]indow",
+			},
 
 			{ "<leader>bP", "<cmd>BufferPin<cr>", desc = "[B]uffer [P]in" },
-			{ "<leader>bca", "<cmd>BufferCloseAllButCurrent<cr>", desc = "[B]uffer [C]lose [A]ll But Current" },
-			{ "<leader>bcl", "<cmd>BufferCloseBuffersLeft<cr>", desc = "[B]uffer [C]lose [L]eft" },
-			{ "<leader>bcr", "<cmd>BufferCloseBuffersRight<cr>", desc = "[B]uffer [C]lose [R]ight" },
+			{
+				"<leader>bca",
+				"<cmd>BufferCloseAllButCurrent<cr>",
+				desc = "[B]uffer [C]lose [A]ll But Current",
+			},
+			{
+				"<leader>bcl",
+				"<cmd>BufferCloseBuffersLeft<cr>",
+				desc = "[B]uffer [C]lose [L]eft",
+			},
+			{
+				"<leader>bcr",
+				"<cmd>BufferCloseBuffersRight<cr>",
+				desc = "[B]uffer [C]lose [R]ight",
+			},
 
 			{ "<A-1>", "<cmd>BufferGoto 1<cr>", desc = "Go to Buffer 1" },
 			{ "<A-2>", "<cmd>BufferGoto 2<cr>", desc = "Go to Buffer 2" },
@@ -130,9 +166,7 @@ return config.create({
 						return vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted
 					end, vim.api.nvim_list_bufs())
 
-					if #buffers <= 1 then
-						vim.opt.showtabline = 0
-					end
+					if #buffers <= 1 then vim.opt.showtabline = 0 end
 				end)
 			end,
 		},

@@ -24,7 +24,7 @@ return config.create({
 		popup = {
 			autofocus = false,
 			hide_on_select = false,
-			copy_register = '"',
+			copy_register = "\"",
 			style = "minimal",
 			border = "none",
 			show_version_date = false,

@@ -17,9 +17,7 @@ local initialized = false
 
 --- Initialize the keys module
 function M.init()
-	if initialized then
-		return
-	end
+	if initialized then return end
 	initialized = true
 
 	vim.schedule(function()
@@ -29,9 +27,7 @@ function M.init()
 				return M._validate_keyspec(spec)
 			end, which_key_specs)
 
-			if #valid_specs > 0 then
-				wk.add(valid_specs)
-			end
+			if #valid_specs > 0 then wk.add(valid_specs) end
 		end
 	end)
 end
@@ -40,9 +36,7 @@ end
 --- @param spec KeySpec
 --- @return boolean
 function M._validate_keyspec(spec)
-	if type(spec) ~= "table" then
-		return false
-	end
+	if type(spec) ~= "table" then return false end
 
 	if type(spec[1]) ~= "string" or spec[1] == "" then
 		vim.notify("Invalid key: must be a non-empty string", vim.log.levels.WARN)
@@ -73,20 +67,19 @@ function M.register(keys)
 					should_include = not not key.cond
 				end
 
-				if not should_include then
-					goto continue
-				end
+				if not should_include then goto continue end
 			end
 
 			table.insert(valid_keys, key)
 			table.insert(which_key_specs, key)
 
 			local success, wk = pcall(require, "which-key")
-			if success and wk.add then
-				wk.add({ key })
-			end
+			if success and wk.add then wk.add({ key }) end
 		else
-			vim.notify(string.format("Invalid key specification at index %d", i), vim.log.levels.WARN)
+			vim.notify(
+				string.format("Invalid key specification at index %d", i),
+				vim.log.levels.WARN
+			)
 		end
 
 		::continue::
@@ -146,9 +139,7 @@ function M.buffer(keys, buffer)
 			local mode = key.mode or "n"
 			local cmd = key[2] or key.callback or key.cmd
 
-			if not cmd then
-				error("Key must have a command or callback")
-			end
+			if not cmd then error("Key must have a command or callback") end
 
 			local modes = type(mode) == "string" and { mode } or mode
 
@@ -158,7 +149,10 @@ function M.buffer(keys, buffer)
 		end)
 
 		if not success then
-			vim.notify(string.format("Error setting buffer key %d: %s", i, err), vim.log.levels.WARN)
+			vim.notify(
+				string.format("Error setting buffer key %d: %s", i, err),
+				vim.log.levels.WARN
+			)
 		end
 	end
 end

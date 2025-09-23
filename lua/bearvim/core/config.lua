@@ -35,16 +35,18 @@ function M.create(config)
 
 				local setup_result = config.setup(opts)
 
-				local keys = type(config.keys) == "function" and config.keys(opts) or config.keys
-				if keys then
-					M._register_keys(keys)
-				end
+				local keys = type(config.keys) == "function" and config.keys(opts)
+					or config.keys
+				if keys then M._register_keys(keys) end
 
 				return setup_result
 			end)
 
 			if not success then
-				vim.notify(string.format("Error in %s setup: %s", module_name, result), vim.log.levels.ERROR)
+				vim.notify(
+					string.format("Error in %s setup: %s", module_name, result),
+					vim.log.levels.ERROR
+				)
 				return nil
 			end
 
@@ -53,10 +55,9 @@ function M.create(config)
 	else
 		module.setup = function(opts)
 			opts = opts or {}
-			local keys = type(config.keys) == "function" and config.keys(opts) or config.keys
-			if keys then
-				M._register_keys(keys)
-			end
+			local keys = type(config.keys) == "function" and config.keys(opts)
+				or config.keys
+			if keys then M._register_keys(keys) end
 		end
 	end
 
@@ -67,11 +68,10 @@ end
 --- @param autocmds table
 --- @param module_name string
 function M._setup_autocmds(autocmds, module_name)
-	if not autocmds or type(autocmds) ~= "table" then
-		return
-	end
+	if not autocmds or type(autocmds) ~= "table" then return end
 
-	local augroup = vim.api.nvim_create_augroup("config_" .. module_name, { clear = true })
+	local augroup =
+		vim.api.nvim_create_augroup("config_" .. module_name, { clear = true })
 
 	for i, autocmd in ipairs(autocmds) do
 		local success, err = pcall(function()
@@ -81,15 +81,21 @@ function M._setup_autocmds(autocmds, module_name)
 			local events = autocmd_opts.event
 			autocmd_opts.event = nil
 
-			if not events then
-				error("Autocmd must have an event")
-			end
+			if not events then error("Autocmd must have an event") end
 
 			vim.api.nvim_create_autocmd(events, autocmd_opts)
 		end)
 
 		if not success then
-			vim.notify(string.format("Error creating autocmd %d in %s: %s", i, module_name, err), vim.log.levels.WARN)
+			vim.notify(
+				string.format(
+					"Error creating autocmd %d in %s: %s",
+					i,
+					module_name,
+					err
+				),
+				vim.log.levels.WARN
+			)
 		end
 	end
 end
@@ -98,9 +104,7 @@ end
 --- @param commands table
 --- @param module_name string
 function M._setup_commands(commands, module_name)
-	if not commands or type(commands) ~= "table" then
-		return
-	end
+	if not commands or type(commands) ~= "table" then return end
 
 	for name, command in pairs(commands) do
 		local success, err = pcall(function()
@@ -111,16 +115,19 @@ function M._setup_commands(commands, module_name)
 			local callback = command.callback or command[1]
 			local opts = command.opts or {}
 
-			if not callback then
-				error("Command must have a callback")
-			end
+			if not callback then error("Command must have a callback") end
 
 			vim.api.nvim_create_user_command(name, callback, opts)
 		end)
 
 		if not success then
 			vim.notify(
-				string.format("Error creating command '%s' in %s: %s", name, module_name, err),
+				string.format(
+					"Error creating command '%s' in %s: %s",
+					name,
+					module_name,
+					err
+				),
 				vim.log.levels.WARN
 			)
 		end
@@ -130,9 +137,7 @@ end
 --- Register keys
 --- @param keys table
 function M._register_keys(keys)
-	if not keys or type(keys) ~= "table" then
-		return
-	end
+	if not keys or type(keys) ~= "table" then return end
 
 	vim.schedule(function()
 		local success, keys_module = pcall(require, "core.keys")
@@ -149,9 +154,7 @@ end
 --- @param config table
 --- @return table|nil
 function M.when(condition, config)
-	if config == nil then
-		return nil
-	end
+	if config == nil then return nil end
 
 	local should_include = false
 
@@ -170,9 +173,7 @@ end
 --- @param config table
 --- @return table
 function M.filetype(filetypes, config)
-	if not config then
-		error("Config cannot be nil", 2)
-	end
+	if not config then error("Config cannot be nil", 2) end
 
 	if type(filetypes) == "string" then
 		filetypes = { filetypes }

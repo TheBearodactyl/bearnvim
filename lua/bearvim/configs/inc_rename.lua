@@ -5,7 +5,11 @@ return config.create({
 
 	setup = function(opts)
 		keys.register({
-			{ "<leader>cR", "<cmd>IncRename<cr>", desc = "Incrementaly Rename Symbol" },
+			{
+				"<leader>cR",
+				"<cmd>IncRename<cr>",
+				desc = "Incrementaly Rename Symbol",
+			},
 		})
 	end,
 

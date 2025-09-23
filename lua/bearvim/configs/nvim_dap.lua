@@ -28,7 +28,11 @@ return config.create({
 				type = "codelldb",
 				request = "launch",
 				program = function()
-					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+					return vim.fn.input(
+						"Path to executable: ",
+						vim.fn.getcwd() .. "/target/debug/",
+						"file"
+					)
 				end,
 				cwd = "${workspaceFolder}",
 				stopOnEntry = false,
@@ -41,7 +45,11 @@ return config.create({
 				type = "codelldb",
 				request = "launch",
 				program = function()
-					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+					return vim.fn.input(
+						"Path to executable: ",
+						vim.fn.getcwd() .. "/",
+						"file"
+					)
 				end,
 				cwd = "${workspaceFolder}",
 				stopOnEntry = false,
@@ -55,8 +63,14 @@ return config.create({
 		vim.api.nvim_set_hl(0, "DapLogPoint", { fg = "#61afef" })
 		vim.api.nvim_set_hl(0, "DapStopped", { fg = "#98c379" })
 
-		vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DapBreakpoint" })
-		vim.fn.sign_define("DapBreakpointCondition", { text = "◐", texthl = "DapBreakpointCondition" })
+		vim.fn.sign_define(
+			"DapBreakpoint",
+			{ text = "●", texthl = "DapBreakpoint" }
+		)
+		vim.fn.sign_define(
+			"DapBreakpointCondition",
+			{ text = "◐", texthl = "DapBreakpointCondition" }
+		)
 		vim.fn.sign_define("DapLogPoint", { text = "◆", texthl = "DapLogPoint" })
 		vim.fn.sign_define("DapStopped", { text = "▶", texthl = "DapStopped" })
 

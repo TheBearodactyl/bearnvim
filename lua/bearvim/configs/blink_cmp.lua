@@ -30,15 +30,23 @@ return config.create({
 		},
 
 		sources = {
-			default = { "lsp", "path", "snippets", "buffer" },
+			default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 			providers = {
+				lazydev = {
+					name = "LazyDev",
+					module = "lazydev.integrations.blink",
+					score_offset = 100,
+				},
 				buffer = {
 					name = "Buffer",
 					module = "blink.cmp.sources.buffer",
 					opts = {
 						get_bufnrs = function()
 							return vim.tbl_filter(function(buf)
-								local byte_size = vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf))
+								local byte_size = vim.api.nvim_buf_get_offset(
+									buf,
+									vim.api.nvim_buf_line_count(buf)
+								)
 								return byte_size < 1024 * 1024
 							end, vim.api.nvim_list_bufs())
 						end,
@@ -123,7 +131,11 @@ return config.create({
 	setup = function(opts)
 		local blink = require("blink.cmp")
 
-		vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#818589", italic = true })
+		vim.api.nvim_set_hl(
+			0,
+			"BlinkCmpGhostText",
+			{ fg = "#818589", italic = true }
+		)
 
 		blink.setup(opts)
 		keys.register({

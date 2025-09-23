@@ -31,9 +31,7 @@ local M = {}
 ---@return PluginSpec
 function M.spec(spec)
 	-- Don't override existing config or setup
-	if spec.config or spec.main then
-		return spec
-	end
+	if spec.config or spec.main then return spec end
 
 	-- Handle setup function properly
 	if spec.setup and not spec.config then
@@ -46,7 +44,8 @@ function M.spec(spec)
 
 	-- Auto-config based on plugin name only if no config exists
 	if spec.opts and not spec.config and not spec.main then
-		local plugin_name = spec.name or spec[1]:match("([^/]+)$"):gsub("%.nvim$", ""):gsub("^nvim%-", "")
+		local plugin_name = spec.name
+			or spec[1]:match("([^/]+)$"):gsub("%.nvim$", ""):gsub("^nvim%-", "")
 		local config_path = "configs." .. plugin_name:gsub("%-", "_")
 
 		spec.config = function(_, opts)

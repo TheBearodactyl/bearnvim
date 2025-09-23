@@ -27,4 +27,11 @@ return {
 		keys = require("bearvim.configs.inc_rename").keys,
 		setup = require("bearvim.configs.inc_rename").setup,
 	}),
+
+	plugin.spec({
+		"folke/lazydev.nvim",
+		ft = "lua",
+		opts = require("bearvim.configs.lazydev").options,
+		setup = require("bearvim.configs.lazydev").setup,
+	}),
 }

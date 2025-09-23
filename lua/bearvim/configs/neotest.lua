@@ -29,9 +29,7 @@ return config.create({
 		end
 
 		local rust_ok, _ = pcall(require, "rustaceanvim.neotest")
-		if rust_ok then
-			table.insert(adapters, require("rustaceanvim.neotest"))
-		end
+		if rust_ok then table.insert(adapters, require("rustaceanvim.neotest")) end
 
 		local jest_ok, neotest_jest = pcall(require, "neotest-jest")
 		if jest_ok then
@@ -49,9 +47,7 @@ return config.create({
 		end
 
 		local vitest_ok, neotest_vitest = pcall(require, "neotest-vitest")
-		if vitest_ok then
-			table.insert(adapters, neotest_vitest())
-		end
+		if vitest_ok then table.insert(adapters, neotest_vitest()) end
 
 		local neotest_opts = vim.tbl_deep_extend("force", {
 			adapters = adapters,

@@ -57,7 +57,10 @@ return config.create({
 		local mr = require("mason-registry")
 
 		mr:on("package:install:success", function(pkg)
-			vim.notify(string.format("Successfully installed %s", pkg.name), vim.log.levels.INFO)
+			vim.notify(
+				string.format("Successfully installed %s", pkg.name),
+				vim.log.levels.INFO
+			)
 			vim.defer_fn(function()
 				require("lazy.core.handler.event").trigger({
 					event = "FileType",
@@ -67,14 +70,20 @@ return config.create({
 		end)
 
 		mr:on("package:install:failed", function(pkg)
-			vim.notify(string.format("Failed to install %s", pkg.name), vim.log.levels.ERROR)
+			vim.notify(
+				string.format("Failed to install %s", pkg.name),
+				vim.log.levels.ERROR
+			)
 		end)
 
 		local function ensure_installed()
 			for _, tool in ipairs(opts.ensure_installed) do
 				local package = mr.get_package(tool)
 				if package and not package:is_installed() then
-					vim.notify(string.format("Installing %s...", tool), vim.log.levels.INFO)
+					vim.notify(
+						string.format("Installing %s...", tool),
+						vim.log.levels.INFO
+					)
 					package:install()
 				end
 			end
@@ -89,7 +98,11 @@ return config.create({
 		keys.register({
 			keys.group("<leader>p", "[P]lugins"),
 			{ "<leader>pm", "<cmd>Mason<cr>", desc = "[P]lugin [M]ason" },
-			{ "<leader>pM", "<cmd>MasonUpdate<cr>", desc = "[P]lugin [M]ason Update" },
+			{
+				"<leader>pM",
+				"<cmd>MasonUpdate<cr>",
+				desc = "[P]lugin [M]ason Update",
+			},
 			{ "<leader>pl", "<cmd>Lazy<cr>", desc = "[P]lugin [L]azy" },
 		})
 	end,
@@ -112,11 +125,12 @@ return config.create({
 
 				for _, tool in ipairs(config.options.ensure_installed) do
 					local package = mr.get_package(tool)
-					if package and not package:is_installed() then
-						package:install()
-					end
+					if package and not package:is_installed() then package:install() end
 				end
-				vim.notify("Installing all configured Mason tools...", vim.log.levels.INFO)
+				vim.notify(
+					"Installing all configured Mason tools...",
+					vim.log.levels.INFO
+				)
 			end,
 			opts = { desc = "Install all configured Mason tools" },
 		},
@@ -141,14 +155,24 @@ return config.create({
 				local installed_packages = mr.get_installed_packages()
 
 				for _, package in ipairs(installed_packages) do
-					if not vim.tbl_contains(config.options.ensure_installed, package.name) then
+					if
+						not vim.tbl_contains(config.options.ensure_installed, package.name)
+					then
 						vim.ui.select(
 							{ "Yes", "No" },
-							{ prompt = string.format("Remove unused package '%s'?", package.name) },
+							{
+								prompt = string.format(
+									"Remove unused package '%s'?",
+									package.name
+								),
+							},
 							function(choice)
 								if choice == "Yes" then
 									package:uninstall()
-									vim.notify(string.format("Uninstalled %s", package.name), vim.log.levels.INFO)
+									vim.notify(
+										string.format("Uninstalled %s", package.name),
+										vim.log.levels.INFO
+									)
 								end
 							end
 						)

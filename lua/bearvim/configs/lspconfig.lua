@@ -14,7 +14,7 @@ return config.create({
 			severity_sort = true,
 		},
 		inlay_hints = { enabled = true },
-		codelens = { enabled = false },
+		codelens = { enabled = true },
 		document_highlight = { enabled = true },
 		capabilities = {},
 		format = {
@@ -25,10 +25,20 @@ return config.create({
 			lua_ls = {
 				settings = {
 					Lua = {
-						workspace = { checkThirdParty = false },
+						workspace = {
+							checkThirdParty = false,
+							library = vim.api.nvim_get_runtime_file("", true),
+						},
+						telemetry = {
+							enable = false,
+						},
 						codeLens = { enable = true },
 						completion = { callSnippet = "Replace" },
 						diagnostics = { globals = { "vim" } },
+						runtime = {
+							version = "LuaJIT",
+							path = vim.split(package.path, ";"),
+						},
 					},
 				},
 			},
@@ -73,7 +83,12 @@ return config.create({
 					},
 					{ "gD", vim.lsp.buf.declaration, desc = "[G]oto [D]eclaration" },
 					{ "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
-					{ "<C-k>", vim.lsp.buf.signature_help, desc = "Signature Help", mode = "i" },
+					{
+						"<C-k>",
+						vim.lsp.buf.signature_help,
+						desc = "Signature Help",
+						mode = "i",
+					},
 				})
 
 				keys.register({
@@ -103,7 +118,8 @@ return config.create({
 				})
 
 				if client and client.server_capabilities.documentHighlightProvider then
-					local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+					local highlight_augroup =
+						vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 						buffer = event.buf,
 						group = highlight_augroup,
@@ -116,7 +132,11 @@ return config.create({
 					})
 				end
 
-				if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+				if
+					client
+					and client.server_capabilities.inlayHintProvider
+					and vim.lsp.inlay_hint
+				then
 					keys.register({
 						{
 							"<leader>th",
@@ -158,14 +178,23 @@ return config.create({
 		vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
-		capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
+		capabilities = vim.tbl_deep_extend(
+			"force",
+			capabilities,
+			require("blink.cmp").get_lsp_capabilities()
+		)
 
 		require("mason-lspconfig").setup({
 			ensure_installed = vim.tbl_keys(opts.servers),
 			handlers = {
 				function(server_name)
 					local server = opts.servers[server_name] or {}
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+					server.capabilities = vim.tbl_deep_extend(
+						"force",
+						{},
+						capabilities,
+						server.capabilities or {}
+					)
 					require("lspconfig")[server_name].setup(server)
 				end,
 			},
