@@ -99,7 +99,12 @@ return config.create({
 				enabled = true,
 			},
 			list = {
-				max_items = 10,
+				max_items = 100,
+
+				selection = {
+					preselect = true,
+					auto_insert = false,
+				},
 			},
 		},
 
@@ -108,6 +113,10 @@ return config.create({
 			trigger = {
 				enabled = true,
 			},
+		},
+
+		fuzzy = {
+			implementation = "prefer_rust",
 		},
 	},
 

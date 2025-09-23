@@ -39,13 +39,6 @@ return config.create({
 					},
 				},
 			},
-			rust_analyzer = {
-				settings = {
-					["rust-analyzer"] = {
-						cargo = { allFeatures = true },
-					},
-				},
-			},
 		},
 	},
 
@@ -139,15 +132,28 @@ return config.create({
 	},
 
 	setup = function(opts)
-		for name, icon in pairs({
-			Error = "󰅚 ",
-			Warn = "󰀪 ",
-			Hint = "󰌶 ",
-			Info = " ",
-		}) do
-			name = "DiagnosticSign" .. name
-			vim.fn.sign_define(name, { text = icon, texthl = name, numhl = "" })
-		end
+		vim.diagnostic.config({
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = "󰅚 ",
+					[vim.diagnostic.severity.WARN] = "󰀪 ",
+					[vim.diagnostic.severity.HINT] = "󰌶 ",
+					[vim.diagnostic.severity.INFO] = " ",
+				},
+				texthl = {
+					[vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
+					[vim.diagnostic.severity.WARN] = "DiagnosticSignWarn",
+					[vim.diagnostic.severity.HINT] = "DiagnosticSignHint",
+					[vim.diagnostic.severity.INFO] = "DiagnosticSignInfo",
+				},
+				numhl = {
+					[vim.diagnostic.severity.ERROR] = "",
+					[vim.diagnostic.severity.WARN] = "",
+					[vim.diagnostic.severity.HINT] = "",
+					[vim.diagnostic.severity.INFO] = "",
+				},
+			},
+		})
 
 		vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 

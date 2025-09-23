@@ -33,11 +33,6 @@ return config.create({
 			min_width = 20,
 			padding = 1,
 		},
-		completion = {
-			cmp = {
-				enabled = true,
-			},
-		},
 		lsp = {
 			enabled = true,
 			on_attach = function() end,

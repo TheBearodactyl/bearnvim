@@ -7,7 +7,6 @@ return config.create({
 			"lua-language-server",
 			"pyright",
 			"typescript-language-server",
-			"rust-analyzer",
 			"gopls",
 			"clangd",
 			"json-lsp",

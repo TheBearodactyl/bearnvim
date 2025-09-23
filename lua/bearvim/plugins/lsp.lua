@@ -11,12 +11,12 @@ return {
 	}),
 
 	plugin.spec({
+		"williamboman/mason-lspconfig.nvim",
+	}),
+
+	plugin.spec({
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
-		dependencies = {
-			"mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-		},
 		setup = require("bearvim.configs.lspconfig").setup,
 		opts = require("bearvim.configs.lspconfig").options,
 	}),
