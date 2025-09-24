@@ -7,5 +7,6 @@ return {
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = require("bearvim.configs.fzf").options,
 		setup = require("bearvim.configs.fzf").setup,
+		keys = require("bearvim.configs.fzf").keys,
 	}),
 }

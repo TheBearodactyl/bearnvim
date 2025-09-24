@@ -140,7 +140,7 @@ function M._register_keys(keys)
 	if not keys or type(keys) ~= "table" then return end
 
 	vim.schedule(function()
-		local success, keys_module = pcall(require, "core.keys")
+		local success, keys_module = pcall(require, "bearvim.core.keys")
 		if success and keys_module and keys_module.register then
 			keys_module.register(keys)
 		else
