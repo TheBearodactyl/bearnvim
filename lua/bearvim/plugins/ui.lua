@@ -13,6 +13,7 @@ return {
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		setup = require("bearvim.configs.lualine").setup,
+		event = "VimEnter",
 	}),
 
 	plugin.spec({
@@ -87,7 +88,15 @@ return {
 		opts = require("bearvim.configs.noice").options,
 		setup = require("bearvim.configs.noice").setup,
 	}),
-
+	--[[
+	plugin.spec({
+		"m4xshen/hardtime.nvim",
+		lazy = false,
+		dependencies = { "MunifTanjim/nui.nvim" },
+		opts = require("bearvim.configs.hardtime").options,
+		setup = require("bearvim.configs.hardtime").setup,
+	}),
+    ]]
 	plugin.spec({ "rktjmp/lush.nvim" }),
 	plugin.spec({ "rktjmp/shipwright.nvim" }),
 }

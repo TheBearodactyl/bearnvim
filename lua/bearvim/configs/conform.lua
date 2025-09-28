@@ -5,14 +5,17 @@ return config.create({
 	options = {
 		notify_on_error = false,
 		format_on_save = function(bufnr)
-			if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-				return
-			end
+			if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
 			return {
 				timeout_ms = 500,
 				lsp_fallback = true,
 			}
 		end,
+		formatters = {
+			zls = {
+				command = "C:/Users/thebe/AppData/Local/mise/installs/zls/0.15.0/zls.exe",
+			},
+		},
 		formatters_by_ft = {
 			lua = { "stylua" },
 			python = { "isort", "black" },
@@ -97,6 +100,38 @@ return config.create({
 			opts = {
 				desc = "Toggle autoformat-on-save",
 			},
+		},
+	},
+
+	autocmds = {
+		{
+			event = "BufWritePre",
+			pattern = { "*.zig", "*.zon" },
+			callback = function()
+				vim.lsp.buf.code_action({
+					context = { only = { "source.fixAll" } },
+					apply = true,
+				})
+			end,
+		},
+
+		{
+			event = "BufWritePre",
+			pattern = { "*.zig", "*.zon" },
+			callback = function()
+				vim.lsp.buf.format()
+			end,
+		},
+
+		{
+			event = "BufWritePre",
+			pattern = { "*.zig", "*.zon" },
+			callback = function()
+				vim.lsp.buf.code_action({
+					context = { only = { "source.organizeImports" } },
+					apply = true,
+				})
+			end,
 		},
 	},
 })

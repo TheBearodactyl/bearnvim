@@ -17,6 +17,9 @@ return config.create({
 				border = "rounded",
 				auto_focus = false,
 			},
+			rustc = {
+				default_edition = "2024",
+			},
 			crate_graph = {
 				backend = "x11",
 				output = nil,
@@ -81,6 +84,7 @@ return config.create({
 		},
 		server = {
 			on_attach = function(client, bufnr)
+				if client.supports_method("textDocument/inlayHint") then vim.lsp.inlay_hint.enable(true) end
 				local map = keys.lsp({ buf = bufnr })
 
 				map({
@@ -182,14 +186,11 @@ return config.create({
 					checkOnSave = true,
 					procMacro = {
 						enable = true,
-						ignored = {
-							["napi-derive"] = { "napi" },
-							["async-recursion"] = { "async_recursion" },
-						},
+						ignored = {},
 					},
 					inlayHints = {
 						bindingModeHints = {
-							enable = false,
+							enable = true,
 						},
 						chainingHints = {
 							enable = true,
@@ -220,13 +221,6 @@ return config.create({
 						},
 					},
 				},
-			},
-		},
-		dap = {
-			adapter = {
-				type = "executable",
-				command = "lldb-vscode",
-				name = "rt_lldb",
 			},
 		},
 	},

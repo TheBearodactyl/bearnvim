@@ -13,9 +13,7 @@ local M = {}
 --- @param config ConfigModule
 --- @return ConfigModule
 function M.create(config)
-	if not config or type(config) ~= "table" then
-		error("Config must be a table", 2)
-	end
+	if not config or type(config) ~= "table" then error("Config must be a table", 2) end
 
 	local module = vim.tbl_deep_extend("force", {}, config)
 	local module_name = config.name or "unnamed"
@@ -25,28 +23,20 @@ function M.create(config)
 			local success, result = pcall(function()
 				opts = vim.tbl_deep_extend("force", config.options or {}, opts or {})
 
-				if config.autocmds then
-					M._setup_autocmds(config.autocmds, module_name)
-				end
+				if config.autocmds then M._setup_autocmds(config.autocmds, module_name) end
 
-				if config.commands then
-					M._setup_commands(config.commands, module_name)
-				end
+				if config.commands then M._setup_commands(config.commands, module_name) end
 
 				local setup_result = config.setup(opts)
 
-				local keys = type(config.keys) == "function" and config.keys(opts)
-					or config.keys
+				local keys = type(config.keys) == "function" and config.keys(opts) or config.keys
 				if keys then M._register_keys(keys) end
 
 				return setup_result
 			end)
 
 			if not success then
-				vim.notify(
-					string.format("Error in %s setup: %s", module_name, result),
-					vim.log.levels.ERROR
-				)
+				vim.notify(string.format("Error in %s setup: %s", module_name, result), vim.log.levels.ERROR)
 				return nil
 			end
 
@@ -55,8 +45,7 @@ function M.create(config)
 	else
 		module.setup = function(opts)
 			opts = opts or {}
-			local keys = type(config.keys) == "function" and config.keys(opts)
-				or config.keys
+			local keys = type(config.keys) == "function" and config.keys(opts) or config.keys
 			if keys then M._register_keys(keys) end
 		end
 	end
@@ -70,8 +59,7 @@ end
 function M._setup_autocmds(autocmds, module_name)
 	if not autocmds or type(autocmds) ~= "table" then return end
 
-	local augroup =
-		vim.api.nvim_create_augroup("config_" .. module_name, { clear = true })
+	local augroup = vim.api.nvim_create_augroup("config_" .. module_name, { clear = true })
 
 	for i, autocmd in ipairs(autocmds) do
 		local success, err = pcall(function()
@@ -87,15 +75,7 @@ function M._setup_autocmds(autocmds, module_name)
 		end)
 
 		if not success then
-			vim.notify(
-				string.format(
-					"Error creating autocmd %d in %s: %s",
-					i,
-					module_name,
-					err
-				),
-				vim.log.levels.WARN
-			)
+			vim.notify(string.format("Error creating autocmd %d in %s: %s", i, module_name, err), vim.log.levels.WARN)
 		end
 	end
 end
@@ -108,9 +88,7 @@ function M._setup_commands(commands, module_name)
 
 	for name, command in pairs(commands) do
 		local success, err = pcall(function()
-			if type(name) ~= "string" or name == "" then
-				error("Command name must be a non-empty string")
-			end
+			if type(name) ~= "string" or name == "" then error("Command name must be a non-empty string") end
 
 			local callback = command.callback or command[1]
 			local opts = command.opts or {}
@@ -121,15 +99,7 @@ function M._setup_commands(commands, module_name)
 		end)
 
 		if not success then
-			vim.notify(
-				string.format(
-					"Error creating command '%s' in %s: %s",
-					name,
-					module_name,
-					err
-				),
-				vim.log.levels.WARN
-			)
+			vim.notify(string.format("Error creating command '%s' in %s: %s", name, module_name, err), vim.log.levels.WARN)
 		end
 	end
 end
@@ -182,9 +152,7 @@ function M.filetype(filetypes, config)
 	end
 
 	for _, ft in ipairs(filetypes) do
-		if type(ft) ~= "string" or ft == "" then
-			error("Each filetype must be a non-empty string", 2)
-		end
+		if type(ft) ~= "string" or ft == "" then error("Each filetype must be a non-empty string", 2) end
 	end
 
 	local result = vim.deepcopy(config)

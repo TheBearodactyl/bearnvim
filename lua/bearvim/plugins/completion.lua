@@ -5,7 +5,7 @@ return {
 		"saghen/blink.cmp",
 		lazy = false,
 		dependencies = "rafamadriz/friendly-snippets",
-		version = "v0.*",
+		version = "v1.7.0",
 		opts = function()
 			return require("bearvim.configs.blink_cmp").options
 		end,

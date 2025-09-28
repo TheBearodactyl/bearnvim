@@ -34,4 +34,10 @@ return {
 		opts = require("bearvim.configs.lazydev").options,
 		setup = require("bearvim.configs.lazydev").setup,
 	}),
+
+	plugin.spec({
+		"b0o/schemastore.nvim",
+		event = "VimEnter",
+		priority = 1000,
+	}),
 }

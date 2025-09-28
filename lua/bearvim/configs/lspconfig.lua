@@ -49,6 +49,7 @@ return config.create({
 					},
 				},
 			},
+			jsonls = {},
 		},
 	},
 
@@ -118,8 +119,7 @@ return config.create({
 				})
 
 				if client and client.server_capabilities.documentHighlightProvider then
-					local highlight_augroup =
-						vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+					local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 						buffer = event.buf,
 						group = highlight_augroup,
@@ -132,11 +132,7 @@ return config.create({
 					})
 				end
 
-				if
-					client
-					and client.server_capabilities.inlayHintProvider
-					and vim.lsp.inlay_hint
-				then
+				if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
 					keys.register({
 						{
 							"<leader>th",
@@ -178,25 +174,34 @@ return config.create({
 		vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
-		capabilities = vim.tbl_deep_extend(
-			"force",
-			capabilities,
-			require("blink.cmp").get_lsp_capabilities()
-		)
+		capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
 
 		require("mason-lspconfig").setup({
 			ensure_installed = vim.tbl_keys(opts.servers),
 			handlers = {
 				function(server_name)
 					local server = opts.servers[server_name] or {}
-					server.capabilities = vim.tbl_deep_extend(
-						"force",
-						{},
-						capabilities,
-						server.capabilities or {}
-					)
+					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 					require("lspconfig")[server_name].setup(server)
 				end,
+			},
+		})
+
+		vim.lsp.config("jsonls", {
+			settings = {
+				json = {
+					schemas = require("schemastore").json.schemas(),
+					validate = { enable = true },
+				},
+			},
+		})
+
+		vim.lsp.config("zls", {
+			cmd = { "C:/Users/thebe/AppData/Local/mise/installs/zls/0.15.0/zls.exe" },
+			settings = {
+				zls = {
+					zig_exe_path = "C:/Users/thebe/AppData/Local/mise/installs/zig/0.15.1/zig.exe",
+				},
 			},
 		})
 	end,

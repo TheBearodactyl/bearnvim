@@ -20,4 +20,12 @@ return {
 		"nvim-tree/nvim-tree.lua",
 		opts = require("bearvim.configs.nvim_tree").options,
 	}),
+
+	plugin.spec({
+		"smoka7/hop.nvim",
+		tag = "v2.7.2",
+		opts = require("bearvim.configs.hop").options,
+		setup = require("bearvim.configs.hop").setup,
+		keys = require("bearvim.configs.hop").keys,
+	}),
 }

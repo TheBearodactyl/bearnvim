@@ -12,16 +12,16 @@ return config.create({
 		},
 		sections = {
 			lualine_a = {
-				{ "mode", separator = { left = "" }, right_padding = 2 },
+				{ "mode", right_padding = 2 },
 			},
 			lualine_b = { "filename", "branch" },
 			lualine_c = {
 				"%=",
 			},
-			lualine_x = {},
+			lualine_x = { "diagnostics" },
 			lualine_y = { "filetype", "progress" },
 			lualine_z = {
-				{ "location", separator = { right = "" }, left_padding = 2 },
+				{ "location", left_padding = 2 },
 			},
 		},
 		inactive_sections = {
@@ -44,7 +44,7 @@ return config.create({
 			{
 				"<leader>Ts",
 				function()
-					if vim.opt.laststatus:get() == 0 then
+					if vim.opt.laststatus == 0 then
 						vim.opt.laststatus = 3
 						vim.notify("Statusline enabled", vim.log.levels.INFO)
 					else
