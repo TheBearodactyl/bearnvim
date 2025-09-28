@@ -19,7 +19,7 @@ return {
 	plugin.spec({
 		"rcarriga/nvim-dap-ui",
 		dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
-		config = false,
+		config = true,
 	}),
 
 	plugin.spec({
@@ -34,7 +34,7 @@ return {
 			commented = false,
 			only_first_definition = true,
 			all_references = false,
-			filter_references_pattern = "<module",
+			filter_references_pattern = "<module>",
 			virt_text_pos = "eol",
 			all_frames = false,
 			virt_lines = false,

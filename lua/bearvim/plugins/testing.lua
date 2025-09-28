@@ -14,8 +14,6 @@ return {
 			{ "haydenmeade/neotest-jest", optional = true },
 			{ "marilari88/neotest-vitest", optional = true },
 		},
-		config = function()
-			require("bearvim.configs.neotest").setup()
-		end,
+		setup = require("bearvim.configs.neotest").setup,
 	}),
 }

@@ -6,12 +6,8 @@ return {
 		lazy = false,
 		dependencies = "rafamadriz/friendly-snippets",
 		version = "v1.7.0",
-		opts = function()
-			return require("bearvim.configs.blink_cmp").options
-		end,
-		config = function(_, opts)
-			require("bearvim.configs.blink_cmp").setup(opts)
-		end,
+		opts = require("bearvim.configs.blink_cmp").options,
+		setup = require("bearvim.configs.blink_cmp").setup,
 	}),
 
 	plugin.spec({

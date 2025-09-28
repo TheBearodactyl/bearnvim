@@ -2,16 +2,13 @@ local config = require("bearvim.core.config")
 local keys = require("bearvim.core.keys")
 
 return config.create({
+	--- @type trouble.Config
 	options = {
+		auto_open = true,
+		presets = { inc_rename = true },
 		modes = {
-			test = {
-				mode = "diagnostics",
-				preview = {
-					type = "split",
-					relative = "win",
-					position = "right",
-					size = 0.3,
-				},
+			lsp = {
+				win = { position = "right" },
 			},
 		},
 	},

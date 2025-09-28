@@ -1,4 +1,25 @@
 local if_nil = vim.F.if_nil
+local uv = vim.loop
+local json = vim.json
+
+local state_file = vim.fn.stdpath("data") .. "/image_state.json"
+
+local function load_state()
+	local fd = uv.fs_open(state_file, "r", 438)
+	if not fd then return nil end
+	local stat = uv.fs_fstat(fd)
+	local data = uv.fs_read(fd, stat.size, 0)
+	uv.fs_close(fd)
+	if not data or data == "" then return nil end
+	return json.decode(data)
+end
+
+local function save_state(state)
+	local fd = uv.fs_open(state_file, "w", 438)
+	if not fd then return end
+	uv.fs_write(fd, json.encode(state), 0)
+	uv.fs_close(fd)
+end
 
 local function random_image()
 	local ok, luv = pcall(require, "luv")
@@ -6,19 +27,30 @@ local function random_image()
 
 	local image_modules = {
 		"bearvim.images.check",
-		"bearvim.images.truth-nuke",
-		"bearvim.images.morris",
+		"bearvim.images.dawgs",
+		"bearvim.images.igloo",
 		"bearvim.images.lemon",
+		"bearvim.images.mob",
+		"bearvim.images.mobfarm",
+		"bearvim.images.morris",
+		"bearvim.images.nichto",
 		"bearvim.images.rat",
 		"bearvim.images.rat2",
-		"bearvim.images.dawgs",
-		"bearvim.images.nichto",
-		"bearvim.images.igloo",
-		"bearvim.images.bills",
-		"bearvim.images.mobfarm",
+		"bearvim.images.reigen",
+		"bearvim.images.truth-nuke",
 	}
 
-	local choice = image_modules[math.random(#image_modules)]
+	local state = load_state() or { remaining = vim.deepcopy(image_modules) }
+
+	if #state.remaining == 0 then state.remaining = vim.deepcopy(image_modules) end
+
+	local idx = math.random(#state.remaining)
+	local choice = state.remaining[idx]
+
+	table.remove(state.remaining, idx)
+
+	save_state(state)
+
 	return require(choice)
 end
 
@@ -69,18 +101,12 @@ local function button(sc, txt, keybind, keybind_opts)
 		hl_shortcut = "Keyword",
 	}
 	if keybind then
-		keybind_opts =
-			if_nil(keybind_opts, { noremap = true, silent = true, nowait = true })
+		keybind_opts = if_nil(keybind_opts, { noremap = true, silent = true, nowait = true })
 		opts.keymap = { "n", sc_, keybind, keybind_opts }
 	end
 
 	local function on_press()
-		local key = vim.api.nvim_replace_termcodes(
-			keybind or sc_ .. "<Ignore>",
-			true,
-			false,
-			true
-		)
+		local key = vim.api.nvim_replace_termcodes(keybind or sc_ .. "<Ignore>", true, false, true)
 		vim.api.nvim_feedkeys(key, "t", false)
 	end
 
