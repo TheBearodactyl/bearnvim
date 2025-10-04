@@ -15,4 +15,11 @@ return {
 		opts = require("bearvim.configs.biscuits").options,
 		setup = require("bearvim.configs.biscuits").setup,
 	}),
+
+	plugin.spec({
+		"folke/todo-comments.nvim",
+		event = "VimEnter",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = { signs = false },
+	}),
 }

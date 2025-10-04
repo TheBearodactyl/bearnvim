@@ -15,11 +15,4 @@ return {
 		event = "InsertEnter",
 		config = true,
 	}),
-
-	plugin.spec({
-		"2kabhishek/nerdy.nvim",
-		dependencies = { "folke/snacks.nvim" },
-		cmd = "Nerdy",
-		opts = require("bearvim.configs.nerdy").options,
-	}),
 }

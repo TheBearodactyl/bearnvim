@@ -16,13 +16,41 @@ function M.bootstrap()
 	vim.opt.rtp:prepend(lazypath)
 end
 
+function M.discover_specs()
+	local spec_files = {}
+	local base_path = vim.fn.stdpath("config") .. "/lua/bearvim/plugins"
+
+	local function find_spec_files(path)
+		local handle = vim.loop.fs_scandir(path)
+		if not handle then return end
+
+		while true do
+			local name, type = vim.loop.fs_scandir_next(handle)
+			if not name then break end
+
+			local full_path = path .. "/" .. name
+
+			if type == "directory" then
+				find_spec_files(full_path)
+			elseif type == "file" and name:match(".*%.lua$") then
+				local import_path = full_path:gsub(".*/lua/", ""):gsub("%.lua$", ""):gsub("/", ".")
+				table.insert(spec_files, { import = import_path })
+			end
+		end
+	end
+
+	if vim.loop.fs_stat(base_path) then find_spec_files(base_path) end
+
+	return spec_files
+end
+
 function M.setup()
 	M.bootstrap()
 
+	local discovered_specs = M.discover_specs()
+
 	require("lazy").setup({
-		spec = {
-			{ import = "bearvim.plugins" },
-		},
+		spec = discovered_specs,
 		defaults = {
 			lazy = false,
 			version = false,
@@ -106,6 +134,14 @@ function M.create_commands()
 		require("lazy").reload()
 		vim.notify("Plugins reloaded!")
 	end, { desc = "Reload lazy plugins" })
+
+	vim.api.nvim_create_user_command("LazyDiscover", function()
+		local specs = M.discover_specs()
+		vim.notify(string.format("Discovered %d spec files", #specs))
+		for _, spec in ipairs(specs) do
+			print(spec.import)
+		end
+	end, { desc = "Show discovered plugin specs" })
 end
 
 function M.init()

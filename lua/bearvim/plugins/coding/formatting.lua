@@ -17,4 +17,15 @@ return {
 		setup = require("bearvim.configs.conform").setup,
 		opts = require("bearvim.configs.conform").options,
 	}),
+
+	plugin.spec({
+		"ThePrimeagen/refactoring.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		lazy = false,
+		opts = require("bearvim.configs.refactoring").options,
+		setup = require("bearvim.configs.refactoring").setup,
+	}),
 }
