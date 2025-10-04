@@ -180,10 +180,11 @@ local function build_dashboard()
 	}
 
 	local footer_text = string.format(
-		"%s%s (%s)",
+		"%s%s (%s) %s",
 		image_data.name or "Unnamed",
 		image_data.desc and image_data.desc ~= "" and (" — " .. image_data.desc) or "",
-		module_name
+		module_name,
+		image_data.source and ("(" .. image_data.source .. ")") or ""
 	)
 
 	local footer = {
