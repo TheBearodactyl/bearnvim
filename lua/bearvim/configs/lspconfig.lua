@@ -48,6 +48,7 @@ return config.create({
 						analysis = { typeCheckingMode = "basic" },
 					},
 				},
+				ft = { ".py", ".rpy" },
 			},
 			jsonls = {},
 		},
@@ -114,16 +115,8 @@ return config.create({
 						end,
 						desc = "[W]orkspace [S]ymbols",
 					},
+					{ "<leader>rn", vim.lsp.buf.rename, desc = "[R]e[n]ame" },
 					{ "<leader>ca", vim.lsp.buf.code_action, desc = "[C]ode [A]ction" },
-					{
-						"<leader>cr",
-						function()
-							local inc_rename = require("inc_rename")
-							return ":" .. inc_rename.config.cmd_name .. " " .. vim.fn.expand("<cword>")
-						end,
-						desc = "[C]ode Rename",
-						expr = true,
-					},
 				})
 
 				if client and client.server_capabilities.documentHighlightProvider then

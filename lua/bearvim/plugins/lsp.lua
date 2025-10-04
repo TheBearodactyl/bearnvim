@@ -40,4 +40,15 @@ return {
 		event = "VimEnter",
 		priority = 1000,
 	}),
+
+	plugin.spec({
+		"ThePrimeagen/refactoring.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		lazy = false,
+		opts = require("bearvim.configs.refactoring").options,
+		setup = require("bearvim.configs.refactoring").setup,
+	}),
 }
