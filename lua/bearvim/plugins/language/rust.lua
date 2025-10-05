@@ -16,6 +16,7 @@ return {
 		lazy = false,
 		ft = { "rust" },
 		opts = require("bearvim.configs.rustaceanvim").options,
+		setup = require("bearvim.configs.rustaceanvim").setup,
 		keys = require("bearvim.configs.rustaceanvim").keys,
 	}),
 }

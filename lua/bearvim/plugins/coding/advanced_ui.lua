@@ -42,6 +42,22 @@ return {
 		setup = require("bearvim.configs.hardtime").setup,
 	}),
 
+	plugin.spec({
+		"sphamba/smear-cursor.nvim",
+		opts = require("bearvim.configs.smear").options,
+		setup = require("bearvim.configs.smear").setup,
+	}),
+
+	plugin.spec({
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-mini/mini.nvim",
+		},
+		opts = require("bearvim.configs.markdown").options,
+		setup = require("bearvim.configs.markdown").setup,
+	}),
+
 	plugin.spec({ "rktjmp/lush.nvim" }),
 	plugin.spec({ "rktjmp/shipwright.nvim" }),
 }

@@ -23,7 +23,7 @@ return {
 
 	plugin.spec({
 		"smjonas/inc-rename.nvim",
-		opts = {},
+		opts = require("bearvim.configs.inc_rename").options,
 		keys = require("bearvim.configs.inc_rename").keys,
 		setup = require("bearvim.configs.inc_rename").setup,
 	}),

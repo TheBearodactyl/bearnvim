@@ -1,3 +1,5 @@
+local utils = require("bearvim.core.utils")
+
 local uv = vim.loop
 local json = vim.json
 local if_nil = vim.F.if_nil
@@ -21,28 +23,6 @@ local function write_file(path, data)
 	uv.fs_close(fd)
 end
 
-local function scan_image_modules()
-	local base = vim.fn.stdpath("config") .. "/lua/bearvim/images"
-	local modules = {}
-
-	local function scan_dir(dir)
-		for name, type_ in vim.fs.dir(dir) do
-			local full = dir .. "/" .. name
-			if type_ == "file" and name:match("%.lua$") then
-				local rel = full:gsub("^.+[\\/]lua[\\/]", ""):gsub("%.lua$", "")
-				local module_name = rel:gsub("[\\/]", ".")
-				table.insert(modules, module_name)
-			elseif type_ == "directory" then
-				scan_dir(full)
-			end
-		end
-	end
-
-	scan_dir(base)
-	table.sort(modules)
-	return modules
-end
-
 local function load_state()
 	local data = read_file(state_file)
 	if not data or data == "" then return nil end
@@ -57,7 +37,10 @@ end
 local function image_modtimes(modules)
 	local mtimes = {}
 	for _, mod in ipairs(modules) do
-		local path = vim.fn.stdpath("config") .. "/lua/" .. mod:gsub("%.", "/") .. ".lua"
+		local path = vim.fn.stdpath("config")
+			.. "/lua/"
+			.. mod:gsub("%.", "/")
+			.. ".lua"
 		local stat = uv.fs_stat(path)
 		mtimes[mod] = stat and stat.mtime.sec or 0
 	end
@@ -69,7 +52,10 @@ local function is_state_outdated(state, modules)
 	if #state.modules ~= #modules then return true end
 	for _, mod in ipairs(modules) do
 		if not state.mtimes[mod] then return true end
-		local path = vim.fn.stdpath("config") .. "/lua/" .. mod:gsub("%.", "/") .. ".lua"
+		local path = vim.fn.stdpath("config")
+			.. "/lua/"
+			.. mod:gsub("%.", "/")
+			.. ".lua"
 		local stat = uv.fs_stat(path)
 		if not stat or stat.mtime.sec ~= state.mtimes[mod] then return true end
 	end
@@ -78,7 +64,7 @@ end
 
 --- @return table image_data, string module_name
 local function random_image()
-	local modules = scan_image_modules()
+	local modules = utils.discover_images()
 	local state = load_state()
 
 	if is_state_outdated(state, modules) then
@@ -111,14 +97,17 @@ local function random_image()
 	end
 
 	if type(image_module) == "table" and image_module.image_str then
-		if not image_module.name then image_module.name = choice:match("([%w-_]+)$") end
+		if not image_module.name then
+			image_module.name = choice:match("([%w-_]+)$")
+		end
 		return image_module, choice
 	elseif type(image_module) == "table" then
 		return {
 			name = choice:match("([%w-_]+)$"),
 			image_str = image_module,
 			desc = "",
-		}, choice
+		},
+			choice
 	else
 		return {
 			name = choice:match("([%w-_]+)$"),
@@ -141,11 +130,19 @@ local function button(sc, txt, keybind, keybind_opts)
 		hl_shortcut = "Keyword",
 	}
 	if keybind then
-		keybind_opts = if_nil(keybind_opts, { noremap = true, silent = true, nowait = true })
+		keybind_opts = if_nil(
+			keybind_opts,
+			{ noremap = true, silent = true, nowait = true }
+		)
 		opts.keymap = { "n", sc_, keybind, keybind_opts }
 	end
 	local function on_press()
-		local key = vim.api.nvim_replace_termcodes(keybind or sc_ .. "<Ignore>", true, false, true)
+		local key = vim.api.nvim_replace_termcodes(
+			keybind or sc_ .. "<Ignore>",
+			true,
+			false,
+			true
+		)
 		vim.api.nvim_feedkeys(key, "t", false)
 	end
 	return { type = "button", val = txt, on_press = on_press, opts = opts }
@@ -182,7 +179,10 @@ local function build_dashboard()
 	local footer_text = string.format(
 		"%s%s (%s) %s",
 		image_data.name or "Unnamed",
-		image_data.desc and image_data.desc ~= "" and (" — " .. image_data.desc) or "",
+		image_data.desc
+				and image_data.desc ~= ""
+				and (" — " .. image_data.desc)
+			or "",
 		module_name,
 		image_data.source and ("(" .. image_data.source .. ")") or ""
 	)
@@ -238,7 +238,10 @@ local function setup_dashboard()
 		once = true,
 		callback = function()
 			start_watcher(function()
-				vim.notify("Images changed — refreshing dashboard...", vim.log.levels.INFO)
+				vim.notify(
+					"Images changed — refreshing dashboard...",
+					vim.log.levels.INFO
+				)
 				package.loaded["bearvim.images"] = nil
 				vim.cmd("AlphaRedraw")
 			end)

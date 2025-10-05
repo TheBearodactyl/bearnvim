@@ -84,7 +84,9 @@ return config.create({
 		},
 		server = {
 			on_attach = function(client, bufnr)
-				if client.supports_method("textDocument/inlayHint") then vim.lsp.inlay_hint.enable(true) end
+				if client.supports_method("textDocument/inlayHint") then
+					vim.lsp.inlay_hint.enable(true)
+				end
 				local map = keys.lsp({ buf = bufnr })
 
 				map({

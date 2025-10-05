@@ -1,7 +1,9 @@
 local M = {}
+local utils = require("bearvim.core.utils")
 
 function M.bootstrap()
 	local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+	--- @diagnostic disable-next-line: undefined-field
 	if not (vim.uv or vim.loop).fs_stat(lazypath) then
 		local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 		vim.fn.system({
@@ -16,38 +18,10 @@ function M.bootstrap()
 	vim.opt.rtp:prepend(lazypath)
 end
 
-function M.discover_specs()
-	local spec_files = {}
-	local base_path = vim.fn.stdpath("config") .. "/lua/bearvim/plugins"
-
-	local function find_spec_files(path)
-		local handle = vim.loop.fs_scandir(path)
-		if not handle then return end
-
-		while true do
-			local name, type = vim.loop.fs_scandir_next(handle)
-			if not name then break end
-
-			local full_path = path .. "/" .. name
-
-			if type == "directory" then
-				find_spec_files(full_path)
-			elseif type == "file" and name:match(".*%.lua$") then
-				local import_path = full_path:gsub(".*/lua/", ""):gsub("%.lua$", ""):gsub("/", ".")
-				table.insert(spec_files, { import = import_path })
-			end
-		end
-	end
-
-	if vim.loop.fs_stat(base_path) then find_spec_files(base_path) end
-
-	return spec_files
-end
-
 function M.setup()
 	M.bootstrap()
 
-	local discovered_specs = M.discover_specs()
+	local discovered_specs = utils.discover_specs()
 
 	require("lazy").setup({
 		spec = discovered_specs,
@@ -109,6 +83,7 @@ function M.setup()
 				},
 			},
 		},
+		--- @diagnostic disable-next-line: assign-type-mismatch
 		dev = {
 			path = "~/projects",
 			patterns = {},

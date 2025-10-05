@@ -2,7 +2,7 @@ local M = {}
 
 --- @class KeySpec
 --- @field [1] string Key combination
---- @field [2]? string|fun() Command or function
+--- @field [2]? string|fun()|fun():string Command or function
 --- @field desc? string Description
 --- @field mode? string|string[] Mode(s)
 --- @field cond? boolean|fun(): boolean Condition
@@ -43,7 +43,10 @@ function M._validate_keyspec(spec)
 	if type(spec) ~= "table" then return false end
 
 	if type(spec[1]) ~= "string" or spec[1] == "" then
-		vim.notify("Invalid key: must be a non-empty string", vim.log.levels.WARN)
+		vim.notify(
+			"Invalid key: must be a non-empty string",
+			vim.log.levels.WARN
+		)
 		return false
 	end
 
@@ -250,14 +253,20 @@ function M.hierarchy(structure, base_prefix)
 				}
 
 				for prop, val in pairs(value) do
-					if prop ~= "group" and prop ~= "children" and prop ~= "mappings" then
+					if
+						prop ~= "group"
+						and prop ~= "children"
+						and prop ~= "mappings"
+					then
 						group_spec[prop] = val
 					end
 				end
 
 				table.insert(specs, group_spec)
 
-				if value.children then process_level(value.children, current_prefix) end
+				if value.children then
+					process_level(value.children, current_prefix)
+				end
 
 				if value.mappings then
 					for _, mapping in ipairs(value.mappings) do

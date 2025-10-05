@@ -19,6 +19,6 @@ return config.create({
 	},
 
 	setup = function(opts)
-		require("noice").setup()
+		require("noice").setup(opts)
 	end,
 })
