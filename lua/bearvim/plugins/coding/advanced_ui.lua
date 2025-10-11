@@ -58,6 +58,21 @@ return {
 		setup = require("bearvim.configs.markdown").setup,
 	}),
 
+	plugin.spec({
+		"vyfor/cord.nvim",
+		build = ":Cord update",
+		opts = require("bearvim.configs.cord").options,
+		setup = require("bearvim.configs.cord").setup,
+	}),
+
+	plugin.spec({
+		"nvim-neorg/neorg",
+		lazy = false,
+		version = "*",
+		opts = require("bearvim.configs.neorg").options,
+		setup = require("bearvim.configs.neorg").setup,
+	}),
+
 	plugin.spec({ "rktjmp/lush.nvim" }),
 	plugin.spec({ "rktjmp/shipwright.nvim" }),
 }

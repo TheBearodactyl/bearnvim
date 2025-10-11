@@ -83,7 +83,11 @@ return config.create({
 						end,
 						desc = "[G]oto [I]mplementation",
 					},
-					{ "gD", vim.lsp.buf.declaration, desc = "[G]oto [D]eclaration" },
+					{
+						"gD",
+						vim.lsp.buf.declaration,
+						desc = "[G]oto [D]eclaration",
+					},
 					{ "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
 					{
 						"<C-k>",
@@ -116,29 +120,51 @@ return config.create({
 						desc = "[W]orkspace [S]ymbols",
 					},
 					{ "<leader>rn", vim.lsp.buf.rename, desc = "[R]e[n]ame" },
-					{ "<leader>ca", vim.lsp.buf.code_action, desc = "[C]ode [A]ction" },
+					{
+						"<leader>ca",
+						vim.lsp.buf.code_action,
+						desc = "[C]ode [A]ction",
+					},
 				})
 
-				if client and client.server_capabilities.documentHighlightProvider then
-					local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
-					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-						buffer = event.buf,
-						group = highlight_augroup,
-						callback = vim.lsp.buf.document_highlight,
-					})
-					vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-						buffer = event.buf,
-						group = highlight_augroup,
-						callback = vim.lsp.buf.clear_references,
-					})
+				if
+					client
+					and client.server_capabilities.documentHighlightProvider
+				then
+					local highlight_augroup = vim.api.nvim_create_augroup(
+						"lsp-highlight",
+						{ clear = false }
+					)
+					vim.api.nvim_create_autocmd(
+						{ "CursorHold", "CursorHoldI" },
+						{
+							buffer = event.buf,
+							group = highlight_augroup,
+							callback = vim.lsp.buf.document_highlight,
+						}
+					)
+					vim.api.nvim_create_autocmd(
+						{ "CursorMoved", "CursorMovedI" },
+						{
+							buffer = event.buf,
+							group = highlight_augroup,
+							callback = vim.lsp.buf.clear_references,
+						}
+					)
 				end
 
-				if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+				if
+					client
+					and client.server_capabilities.inlayHintProvider
+					and vim.lsp.inlay_hint
+				then
 					keys.register({
 						{
 							"<leader>th",
 							function()
-								vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+								vim.lsp.inlay_hint.enable(
+									not vim.lsp.inlay_hint.is_enabled()
+								)
 							end,
 							desc = "[T]oggle Inlay [H]ints",
 						},
@@ -175,14 +201,23 @@ return config.create({
 		vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
-		capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
+		capabilities = vim.tbl_deep_extend(
+			"force",
+			capabilities,
+			require("blink.cmp").get_lsp_capabilities()
+		)
 
 		require("mason-lspconfig").setup({
 			ensure_installed = vim.tbl_keys(opts.servers),
 			handlers = {
 				function(server_name)
 					local server = opts.servers[server_name] or {}
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+					server.capabilities = vim.tbl_deep_extend(
+						"force",
+						{},
+						capabilities,
+						server.capabilities or {}
+					)
 					require("lspconfig")[server_name].setup(server)
 				end,
 			},
@@ -198,12 +233,23 @@ return config.create({
 		})
 
 		vim.lsp.config("zls", {
-			cmd = { "C:/Users/thebe/AppData/Local/mise/installs/zls/0.15.0/zls.exe" },
+			cmd = {
+				"C:/Users/thebe/AppData/Local/mise/installs/zls/0.15.0/zls.exe",
+			},
 			settings = {
 				zls = {
 					zig_exe_path = "C:/Users/thebe/AppData/Local/mise/installs/zig/0.15.1/zig.exe",
 				},
 			},
 		})
+
+		vim.lsp.config("gleam", {
+			cmd = { "D:/Projects/woah/gleamls/target/release/gleamls.exe" },
+			filetypes = { "gleam" },
+			root_markers = { "gleam.toml", ".git" },
+			settings = {},
+		})
+
+		vim.lsp.enable("gleam")
 	end,
 })

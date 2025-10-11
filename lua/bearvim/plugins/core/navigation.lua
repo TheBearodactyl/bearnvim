@@ -4,6 +4,7 @@ return {
 	plugin.spec({
 		"nvim-tree/nvim-tree.lua",
 		opts = require("bearvim.configs.nvim_tree").options,
+		setup = require("bearvim.configs.nvim_tree").setup,
 	}),
 
 	plugin.spec({
@@ -41,5 +42,14 @@ return {
 		dependencies = { "nvim-lua/plenary.nvim" },
 		setup = require("bearvim.configs.harpoon").setup,
 		opts = require("bearvim.configs.harpoon").options,
+	}),
+
+	plugin.spec({
+		"brenton-leighton/multiple-cursors.nvim",
+		version = "*",
+		enabled = false,
+		opts = require("bearvim.configs.multi-cursors").options,
+		setup = require("bearvim.configs.multi-cursors").setup,
+		keys = require("bearvim.configs.multi-cursors").keys,
 	}),
 }

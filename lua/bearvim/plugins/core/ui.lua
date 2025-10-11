@@ -28,4 +28,13 @@ return {
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		setup = require("bearvim.configs.alpha").setup,
 	}),
+
+	plugin.spec({
+		"nvim-treesitter/nvim-treesitter",
+		branch = "master",
+		lazy = false,
+		build = ":TSUpdate",
+		opts = require("bearvim.configs.treesitter").options,
+		setup = require("bearvim.configs.treesitter").setup,
+	}),
 }

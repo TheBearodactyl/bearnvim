@@ -46,9 +46,7 @@ return config.create({
 		require("crates").setup(opts)
 
 		keys.register({
-			keys.group("<leader>C", "[C]rates (Rust)", function()
-				return vim.bo.filetype == "toml"
-			end),
+			keys.group("<leader>C", "[C]rates (Rust)"),
 			{
 				"<leader>Ct",
 				function()

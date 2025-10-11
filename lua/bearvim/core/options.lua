@@ -32,7 +32,7 @@ local options = {
 	-- Indentation
 	tabstop = 4,
 	shiftwidth = 4,
-	expandtab = true,
+	expandtab = false,
 	autoindent = true,
 	smartindent = true,
 	breakindent = true,
@@ -65,7 +65,12 @@ function M.setup(opts)
 			vim.opt[option] = value
 		end)
 
-		if not success then vim.notify(string.format("Failed to set option '%s': %s", option, err), vim.log.levels.WARN) end
+		if not success then
+			vim.notify(
+				string.format("Failed to set option '%s': %s", option, err),
+				vim.log.levels.WARN
+			)
+		end
 	end
 
 	vim.g.loaded_netrw = 1
@@ -94,7 +99,9 @@ function M.setup_autocmds()
 			callback = function()
 				local mark = vim.api.nvim_buf_get_mark(0, "\"")
 				local lcount = vim.api.nvim_buf_line_count(0)
-				if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
+				if mark[1] > 0 and mark[1] <= lcount then
+					pcall(vim.api.nvim_win_set_cursor, 0, mark)
+				end
 			end,
 		},
 		{
@@ -102,7 +109,8 @@ function M.setup_autocmds()
 			desc = "Auto create directories",
 			callback = function(event)
 				if event.match:match("^%w%w+://") then return end
-				local file = (vim.uv or vim.loop).fs_realpath(event.match) or event.match
+				local file = (vim.uv or vim.loop).fs_realpath(event.match)
+					or event.match
 				local dir = vim.fn.fnamemodify(file, ":p:h")
 				if vim.fn.isdirectory(dir) == 0 then vim.fn.mkdir(dir, "p") end
 			end,
@@ -143,7 +151,11 @@ function M.setup_autocmds()
 
 		if not success then
 			vim.notify(
-				string.format("Failed to create autocmd '%s': %s", autocmd.desc or "unknown", err),
+				string.format(
+					"Failed to create autocmd '%s': %s",
+					autocmd.desc or "unknown",
+					err
+				),
 				vim.log.levels.WARN
 			)
 		end
@@ -191,13 +203,21 @@ function M.setup_keymaps()
 
 	for _, keymap in ipairs(keymaps) do
 		local success, err = pcall(function()
-			local modes, key, cmd, desc, opts = keymap[1], keymap[2], keymap[3], keymap[4], keymap[5] or {}
+			local modes, key, cmd, desc, opts =
+				keymap[1], keymap[2], keymap[3], keymap[4], keymap[5] or {}
 			opts.desc = opts.desc or desc
 			vim.keymap.set(modes, key, cmd, opts)
 		end)
 
 		if not success then
-			vim.notify(string.format("Failed to set keymap '%s': %s", keymap[2] or "unknown", err), vim.log.levels.WARN)
+			vim.notify(
+				string.format(
+					"Failed to set keymap '%s': %s",
+					keymap[2] or "unknown",
+					err
+				),
+				vim.log.levels.WARN
+			)
 		end
 	end
 end
@@ -208,11 +228,18 @@ end
 --- @param opts table Highlight options
 function M.highlight(ns, name, opts)
 	if type(ns) ~= "number" then error("Namespace must be a number", 2) end
-	if type(name) ~= "string" or name == "" then error("Name must be a non-empty string", 2) end
+	if type(name) ~= "string" or name == "" then
+		error("Name must be a non-empty string", 2)
+	end
 	if type(opts) ~= "table" then error("Options must be a table", 2) end
 
 	local success, err = pcall(vim.api.nvim_set_hl, ns, name, opts)
-	if not success then vim.notify(string.format("Failed to set highlight '%s': %s", name, err), vim.log.levels.WARN) end
+	if not success then
+		vim.notify(
+			string.format("Failed to set highlight '%s': %s", name, err),
+			vim.log.levels.WARN
+		)
+	end
 end
 
 M.setup()

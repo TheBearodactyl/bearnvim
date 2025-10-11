@@ -2,10 +2,15 @@ local config = require("bearvim.core.config")
 local keys = require("bearvim.core.keys")
 
 return config.create({
+	--- @type blink.cmp.Config
 	options = {
 		keymap = {
 			preset = "enter",
-			["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+			["<C-space>"] = {
+				"show",
+				"show_documentation",
+				"hide_documentation",
+			},
 			["<C-e>"] = { "hide" },
 			["<C-y>"] = { "select_and_accept" },
 
@@ -57,7 +62,9 @@ return config.create({
 					module = "blink.cmp.sources.snippets",
 					opts = {
 						friendly_snippets = true,
-						search_paths = { vim.fn.stdpath("config") .. "/snippets" },
+						search_paths = {
+							vim.fn.stdpath("config") .. "/snippets",
+						},
 						global_snippets = { "all" },
 						extended_filetypes = {},
 						ignored_filetypes = {},
@@ -70,7 +77,9 @@ return config.create({
 						trailing_slash = false,
 						label_trailing_slash = true,
 						get_cwd = function(context)
-							return vim.fn.expand(("#%d:p:h"):format(context.bufnr))
+							return vim.fn.expand(
+								("#%d:p:h"):format(context.bufnr)
+							)
 						end,
 						show_hidden_files_by_default = false,
 					},
@@ -128,6 +137,7 @@ return config.create({
 		},
 	},
 
+	--- @param opts blink.cmp.Config
 	setup = function(opts)
 		local blink = require("blink.cmp")
 
