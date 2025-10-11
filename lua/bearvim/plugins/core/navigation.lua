@@ -37,11 +37,12 @@ return {
 	}),
 
 	plugin.spec({
-		"ThePrimeagen/harpoon",
-		branch = "harpoon2",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		setup = require("bearvim.configs.harpoon").setup,
-		opts = require("bearvim.configs.harpoon").options,
+		"otavioschwanck/arrow.nvim",
+		dependencies = {
+			{ "nvim-tree/nvim-web-devicons" },
+		},
+		opts = require("bearvim.configs.arrow").options,
+		setup = require("bearvim.configs.arrow").setup,
 	}),
 
 	plugin.spec({

@@ -73,6 +73,12 @@ return {
 		setup = require("bearvim.configs.neorg").setup,
 	}),
 
+	plugin.spec({
+		"TobinPalmer/rayso.nvim",
+		opts = require("bearvim.configs.rayso").options,
+		setup = require("bearvim.configs.rayso").setup,
+	}),
+
 	plugin.spec({ "rktjmp/lush.nvim" }),
 	plugin.spec({ "rktjmp/shipwright.nvim" }),
 }
