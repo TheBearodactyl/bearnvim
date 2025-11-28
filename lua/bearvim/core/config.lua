@@ -69,6 +69,162 @@ function M.create(config)
 	return module
 end
 
+--- @class RegexOpts Regex command options
+--- @field name string Command name (will be prefixed with user command prefix)
+--- @field match string Pattern to match
+--- @field replace string Replacement pattern
+--- @field range? string Range (default: "%")
+--- @field flags? string Additional flags (default: "")
+--- @field global? boolean Add 'g' flag (default: false)
+--- @field confirm? boolean Add 'c' flag for confirmation (default: false)
+--- @field desc? string Command description
+
+--- Helper for creating regex substitution commands
+--- @param opts RegexOpts Command options
+--- @return table Command configuration
+function M.regex(opts)
+	if type(opts) ~= "table" then
+		error("regex() requires a table argument", 2)
+	end
+
+	if type(opts.name) ~= "string" or opts.name == "" then
+		error("regex() requires a non-empty 'name' field", 2)
+	end
+
+	if type(opts.match) ~= "string" or opts.match == "" then
+		error("regex() requires a non-empty 'match' field", 2)
+	end
+
+	if type(opts.replace) ~= "string" then
+		error("regex() requires a 'replace' field", 2)
+	end
+
+	local range = opts.range or "%"
+	local flags = opts.flags or ""
+
+	if opts.global and not flags:match("g") then flags = flags .. "g" end
+
+	if opts.confirm and not flags:match("c") then flags = flags .. "c" end
+
+	local escaped_match = opts.match:gsub("/", "\\/")
+	local escaped_replace = opts.replace:gsub("/", "\\/")
+
+	return {
+		name = "RgxSub" .. opts.name,
+		command = function()
+			local cmd_str = range
+				.. "s/"
+				.. escaped_match
+				.. "/"
+				.. escaped_replace
+				.. "/"
+				.. flags
+			vim.cmd(cmd_str)
+		end,
+		desc = opts.desc
+			or string.format("Regex: %s -> %s", opts.match, opts.replace),
+		range = range ~= "%" and true or nil,
+	}
+end
+
+--- @class AliasOpts
+--- @field name string Command name
+--- @field command string|function Command to execute
+--- @field desc? string Command description
+--- @field range? boolean|number Accept range
+--- @field nargs? string|number Number of arguments
+--- @field complete? string|function Completion function
+--- @field bang? boolean Accept bang modifier
+
+--- Helper for creating simple command aliases
+--- @param opts AliasOpts Command options
+--- @return table Command configuration
+function M.alias(opts)
+	if type(opts) ~= "table" then
+		error("alias() requires a table argument", 2)
+	end
+
+	if type(opts.name) ~= "string" or opts.name == "" then
+		error("alias() requires a non-empty 'name' field", 2)
+	end
+
+	if not opts.command then error("alias() requires a 'command' field", 2) end
+
+	return {
+		name = opts.name,
+		command = opts.command,
+		desc = opts.desc or string.format("Alias: %s", opts.name),
+		range = opts.range,
+		nargs = opts.nargs,
+		complete = opts.complete,
+		bang = opts.bang,
+	}
+end
+
+--- Helper for creating a generic command
+--- @param name string Command name
+--- @param callback string|function Command callback
+--- @param opts? table Additional options
+--- @return table Command configuration
+function M.command(name, callback, opts)
+	if type(name) ~= "string" or name == "" then
+		error("command() requires a non-empty name", 2)
+	end
+
+	if not callback then error("command() requires a callback", 2) end
+
+	opts = opts or {}
+
+	return vim.tbl_extend("force", {
+		name = name,
+		command = callback,
+	}, opts)
+end
+
+--- Register a single command
+--- @param cmd_config table Command configuration
+function M.register_command(cmd_config)
+	if type(cmd_config) ~= "table" then
+		vim.notify("Command config must be a table", vim.log.levels.WARN)
+		return
+	end
+
+	local name = cmd_config.name
+	local command = cmd_config.command
+
+	if type(name) ~= "string" or name == "" then
+		vim.notify("Command must have a valid name", vim.log.levels.WARN)
+		return
+	end
+
+	if not command then
+		vim.notify(
+			string.format("Command '%s' must have a command or callback", name),
+			vim.log.levels.WARN
+		)
+		return
+	end
+
+	local cmd_opts = {
+		desc = cmd_config.desc,
+		range = cmd_config.range,
+		nargs = cmd_config.nargs or 0,
+		complete = cmd_config.complete,
+		bang = cmd_config.bang,
+	}
+
+	local success, err = pcall(function()
+		vim.api.nvim_create_user_command(name, command, cmd_opts)
+	end)
+
+	if not success then
+		vim.notify(
+			string.format("Failed to create command '%s': %s", name, err),
+			vim.log.levels.WARN
+		)
+	end
+end
+
 --- Setup autocommands
 --- @param autocmds table
 --- @param module_name string

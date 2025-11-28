@@ -22,26 +22,6 @@ return config.create({
 			timeout_ms = nil,
 		},
 		servers = {
-			lua_ls = {
-				settings = {
-					Lua = {
-						workspace = {
-							checkThirdParty = false,
-							library = vim.api.nvim_get_runtime_file("", true),
-						},
-						telemetry = {
-							enable = false,
-						},
-						codeLens = { enable = true },
-						completion = { callSnippet = "Replace" },
-						diagnostics = { globals = { "vim" } },
-						runtime = {
-							version = "LuaJIT",
-							path = vim.split(package.path, ";"),
-						},
-					},
-				},
-			},
 			pyright = {
 				settings = {
 					python = {
@@ -51,6 +31,9 @@ return config.create({
 				ft = { ".py", ".rpy" },
 			},
 			jsonls = {},
+			taplo = {
+				filetypes = { "toml" },
+			},
 		},
 	},
 
@@ -170,6 +153,21 @@ return config.create({
 						},
 					})
 				end
+
+				-- Handle semantic tokens for Vue files
+				if client and client.name == "vtsls" then
+					if vim.bo.filetype == "vue" then
+						client.server_capabilities.semanticTokensProvider =
+							false
+					else
+						if
+							client.server_capabilities.semanticTokensProvider
+						then
+							client.server_capabilities.semanticTokensProvider.full =
+								true
+						end
+					end
+				end
 			end,
 		},
 	},
@@ -178,9 +176,9 @@ return config.create({
 		vim.diagnostic.config({
 			signs = {
 				text = {
-					[vim.diagnostic.severity.ERROR] = "󰅚 ",
-					[vim.diagnostic.severity.WARN] = "󰀪 ",
-					[vim.diagnostic.severity.HINT] = "󰌶 ",
+					[vim.diagnostic.severity.ERROR] = " ",
+					[vim.diagnostic.severity.WARN] = " ",
+					[vim.diagnostic.severity.HINT] = " ",
 					[vim.diagnostic.severity.INFO] = " ",
 				},
 				texthl = {
@@ -223,10 +221,28 @@ return config.create({
 			},
 		})
 
+		local vue_language_server_path = vim.fn.stdpath("data")
+			.. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
+
+		local tsserver_filetypes = {
+			"javascript",
+			"javascriptreact",
+			"typescript",
+			"typescriptreact",
+			"vue",
+		}
+
+		local vue_plugin = {
+			name = "@vue/typescript-plugin",
+			location = vue_language_server_path,
+			languages = { "vue" },
+		}
+
 		vim.lsp.config("jsonls", {
 			settings = {
 				json = {
 					schemas = require("schemastore").json.schemas(),
+					schemaDownload = { enable = true },
 					validate = { enable = true },
 				},
 			},
@@ -243,13 +259,191 @@ return config.create({
 			},
 		})
 
-		vim.lsp.config("gleam", {
-			cmd = { "D:/Projects/woah/gleamls/target/release/gleamls.exe" },
-			filetypes = { "gleam" },
-			root_markers = { "gleam.toml", ".git" },
-			settings = {},
+		vim.lsp.config("taplo", {
+			filetypes = { "toml" },
+			root_markers = { "*.toml", ".git" },
 		})
 
-		vim.lsp.enable("gleam")
+		vim.lsp.config("lua_ls", {
+			cmd = {
+				"C:/Users/thebe/AppData/Local/nvim-data/mason/bin/lua-language-server.cmd",
+			},
+			settings = {
+				Lua = {
+					runtime = {
+						version = "LuaJIT",
+					},
+					codeLens = {
+						enable = true,
+					},
+					completion = {
+						autoRequire = true,
+						callSnippet = "Both",
+					},
+					diagnostics = {
+						workspaceEvent = "OnChange",
+						globals = { "vim" },
+					},
+					doc = {
+						regengine = "lua",
+					},
+					hint = {
+						enable = true,
+						semicolon = "All",
+						arrayIndex = "Enable",
+						setType = true,
+					},
+					type = {
+						castNumberToInteger = false,
+						checkTableShape = true,
+						inferParamType = true,
+						inferTableSize = 20,
+					},
+					workspace = {
+						checkThirdParty = false,
+					},
+				},
+			},
+		})
+
+		-- Configure vtsls with Vue support and inlay hints
+		-- IMPORTANT: Enable vue_ls in the on_attach callback
+		vim.lsp.config("vtsls", {
+			filetypes = tsserver_filetypes,
+			settings = {
+				vtsls = {
+					tsserver = {
+						globalPlugins = {
+							vue_plugin,
+						},
+					},
+				},
+				typescript = {
+					inlayHints = {
+						parameterNames = { enabled = "literals" },
+						parameterTypes = { enabled = true },
+						variableTypes = { enabled = true },
+						propertyDeclarationTypes = { enabled = true },
+						functionLikeReturnTypes = { enabled = true },
+						enumMemberValues = { enabled = true },
+					},
+				},
+				javascript = {
+					inlayHints = {
+						parameterNames = { enabled = "literals" },
+						parameterTypes = { enabled = true },
+						variableTypes = { enabled = true },
+						propertyDeclarationTypes = { enabled = true },
+						functionLikeReturnTypes = { enabled = true },
+						enumMemberValues = { enabled = true },
+					},
+				},
+			},
+			on_attach = function(client, bufnr)
+				-- Enable vue_ls after vtsls is attached
+				vim.schedule(function()
+					vim.lsp.enable({ "vue_ls" })
+				end)
+			end,
+		})
+
+		-- Configure Vue language server with inlay hints
+		vim.lsp.config("vue_ls", {
+			cmd = { "vue-language-server", "--stdio" },
+			filetypes = { "vue" },
+			root_markers = { "package.json", ".git" },
+			settings = {
+				vue = {
+					inlayHints = {
+						destructuredProps = {
+							enabled = true,
+						},
+						inlineHandlerLoading = {
+							enabled = true,
+						},
+						missingProps = {
+							enabled = true,
+						},
+						optionsWrapper = {
+							enabled = true,
+						},
+						vBindShorthand = {
+							enabled = true,
+						},
+					},
+				},
+			},
+		})
+
+		vim.lsp.config("html", {
+			cmd = { "vscode-html-language-server", "--stdio" },
+			filetypes = { "html" },
+			root_markers = { "package.json", ".git" },
+		})
+
+		vim.lsp.config("cssls", {
+			cmd = { "vscode-css-language-server", "--stdio" },
+			filetypes = { "css", "scss", "less" },
+			root_markers = { "package.json", ".git" },
+			settings = {
+				css = {
+					validate = true,
+					lint = {
+						unknownAtRules = "ignore",
+					},
+				},
+				scss = {
+					validate = true,
+					lint = {
+						unknownAtRules = "ignore",
+					},
+				},
+				less = {
+					validate = true,
+					lint = {
+						unknownAtRules = "ignore",
+					},
+				},
+			},
+		})
+
+		vim.lsp.config("eslint", {
+			cmd = { "vscode-eslint-language-server", "--stdio" },
+			filetypes = {
+				"javascript",
+				"javascriptreact",
+				"typescript",
+				"typescriptreact",
+				"vue",
+			},
+			root_markers = {
+				".eslintrc",
+				".eslintrc.js",
+				".eslintrc.json",
+				"package.json",
+				".git",
+			},
+		})
+
+		vim.lsp.config("clangd", {
+			cmd = { "clangd" },
+			filetypes = { "c", "cpp", "objc", "objcpp" },
+			root_markers = {
+				"compile_commands.json",
+				"compile_flags.txt",
+				".git",
+			},
+		})
+
+		-- Enable vtsls first, which will then enable vue_ls in its on_attach
+		-- Do NOT enable vue_ls here
+		vim.lsp.enable({
+			"gleam",
+			"vtsls",
+			"html",
+			"cssls",
+			"eslint",
+			"clangd",
+		})
 	end,
 })

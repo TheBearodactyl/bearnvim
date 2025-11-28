@@ -21,6 +21,7 @@
 --- @field is_rust fun(): boolean Get whether the current buffer is Rust code
 --- @field discover_specs fun(): table<string> Return an array of plugin spec definitions in the plugins directory
 --- @field discover_images fun(): table<string> Return an array of available image modules for the dashboard
+--- @field discover_commands fun(): table<string> Return an array of command module paths in the commands directory
 --- @field save_data fun(filename: string, data: any, opts?: JsonUtils.WriteOpts): boolean, string? Save data to a given JSON file in vim.fn.stdpath("data")
 --- @field load_data fun(filename: string, opts?: JsonUtils.ReadOpts): any?, string? Load data from a given JSON file in vim.fn.stdpath("data")
 --- @field watch fun(path: string, opts: WatchOptions): Watcher|nil, string? Start watching a path for changes
@@ -38,6 +39,39 @@ end
 --- @return boolean is_rust
 M.is_rust = function()
 	return vim.bo.filetype == "rust"
+end
+
+--- Return an array of command module paths in the commands directory
+--- @return table<string> command_files The array of discovered command modules
+M.discover_commands = function()
+	local command_files = {}
+	local base_path = vim.fn.stdpath("config") .. "/lua/bearvim/commands"
+
+	local function find_command_files(path)
+		local handle = vim.loop.fs_scandir(path)
+		if not handle then return end
+
+		while true do
+			local name, type = vim.loop.fs_scandir_next(handle)
+			if not name then break end
+
+			local full_path = path .. "/" .. name
+
+			if type == "directory" then
+				find_command_files(full_path)
+			elseif type == "file" and name:match(".*%.lua$") then
+				local import_path = full_path
+					:gsub(".*/lua/", "")
+					:gsub("%.lua$", "")
+					:gsub("/", ".")
+				table.insert(command_files, import_path)
+			end
+		end
+	end
+
+	if vim.loop.fs_stat(base_path) then find_command_files(base_path) end
+
+	return command_files
 end
 
 --- Return an array of plugin spec definitions in the plugins directory

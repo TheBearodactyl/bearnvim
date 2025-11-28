@@ -45,4 +45,10 @@ return {
 		"j-hui/fidget.nvim",
 		opts = require("bearvim.configs.fidget").options,
 	}),
+
+	plugin.spec({
+		"Redoxahmii/json-to-types.nvim",
+		build = "sh install.sh bun",
+		ft = "json",
+	}),
 }
