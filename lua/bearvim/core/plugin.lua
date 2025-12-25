@@ -30,10 +30,8 @@ local M = {}
 ---@param spec PluginSpec
 ---@return PluginSpec
 function M.spec(spec)
-	-- Don't override existing config or setup
 	if spec.config or spec.main then return spec end
 
-	-- Handle setup function properly
 	if spec.setup and not spec.config then
 		local setup_fn = spec.setup
 		spec.config = function(_, opts)
@@ -42,14 +40,12 @@ function M.spec(spec)
 		spec.setup = nil
 	end
 
-	-- Auto-config based on plugin name only if no config exists AND opts is present
 	if spec.opts and not spec.config and not spec.main then
 		local plugin_name = spec.name
 			or spec[1]:match("([^/]+)$"):gsub("%.nvim$", ""):gsub("^nvim%-", "")
 		local config_path = "configs." .. plugin_name:gsub("%-", "_")
 
 		spec.config = function(_, opts)
-			-- First try custom config module
 			local ok, config_module = pcall(require, config_path)
 			if ok and config_module then
 				if type(config_module.setup) == "function" then
@@ -60,15 +56,14 @@ function M.spec(spec)
 					return
 				end
 			end
-			
-			-- Fallback: try to call setup on the plugin directly
-			-- Only attempt this if the plugin is actually loaded
+
 			local plugin_ok, plugin_module = pcall(require, plugin_name)
 			if plugin_ok and plugin_module then
 				if type(plugin_module.setup) == "function" then
 					plugin_module.setup(opts)
-				elseif type(plugin_module) == "table" and plugin_module.config then
-					-- Some plugins expose a config function instead of setup
+				elseif
+					type(plugin_module) == "table" and plugin_module.config
+				then
 					if type(plugin_module.config) == "function" then
 						plugin_module.config(opts)
 					end
@@ -106,7 +101,10 @@ function M.keys(mappings)
 	for key, mapping in pairs(mappings) do
 		if type(mapping) == "table" then
 			if mapping.group then
-				table.insert(keys, { key, group = mapping.group, cond = mapping.cond })
+				table.insert(
+					keys,
+					{ key, group = mapping.group, cond = mapping.cond }
+				)
 			else
 				table.insert(keys, {
 					key,

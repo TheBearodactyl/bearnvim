@@ -15,8 +15,8 @@ return config.create({
 	},
 	--- @param opts CordConfig
 	setup = function(opts)
-		require("cord").setup(opts)
+		--require("cord").setup(opts)
 
-		vim.cmd("Cord update")
+		--vim.cmd("Cord update")
 	end,
 })

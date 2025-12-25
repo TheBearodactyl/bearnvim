@@ -10,7 +10,9 @@ return config.create({
 		ext_opts = {
 			[1] = {
 				active = {
-					virt_text = { { "●", "Comment" } },
+					virt_text = {
+						{ "●", "Comment" },
+					},
 				},
 			},
 		},
@@ -44,18 +46,6 @@ return config.create({
 			{
 				"<Tab>",
 				function()
-					if luasnip.expand_or_jumpable() then
-						luasnip.expand_or_jump()
-					else
-						return "<Tab>"
-					end
-				end,
-				desc = "Expand/Jump Snippet",
-				mode = "i",
-			},
-			{
-				"<Tab>",
-				function()
 					luasnip.jump(1)
 				end,
 				desc = "Next Snippet Node",
@@ -67,7 +57,15 @@ return config.create({
 					luasnip.jump(-1)
 				end,
 				desc = "Previous Snippet Node",
-				mode = { "i", "s" },
+				mode = "s",
+			},
+			{
+				"<S-Tab>",
+				function()
+					if luasnip.jumpable(-1) then luasnip.jump(-1) end
+				end,
+				desc = "Previous Snippet Node",
+				mode = "i",
 			},
 			{
 				"<C-l>",
@@ -78,5 +76,7 @@ return config.create({
 				mode = "i",
 			},
 		})
+
+		vim.keymap.set("s", "<BS>", "<C-g>c", { noremap = true, silent = true })
 	end,
 })

@@ -10,7 +10,7 @@ local options = {
 	swapfile = true,
 	backup = true,
 	writebackup = true,
-	backupdir = "C:/Users/thebe/.nvim-bak",
+	backupdir = "C:/Users/bearodactyl/.nvim-bak",
 	undofile = true,
 	undolevels = 10000,
 	updatetime = 250,
@@ -32,7 +32,7 @@ local options = {
 	-- Indentation
 	tabstop = 4,
 	shiftwidth = 4,
-	expandtab = false,
+	expandtab = true,
 	autoindent = true,
 	smartindent = true,
 	breakindent = true,
@@ -49,6 +49,8 @@ local options = {
 
 	-- Completion
 	completeopt = "menu,menuone,noselect",
+	selectmode = "mouse,key",
+	selection = "inclusive",
 
 	-- Performance
 	lazyredraw = false,

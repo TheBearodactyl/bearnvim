@@ -108,10 +108,8 @@ function M.load_commands(command_paths)
 
 		if success and cmd_config then
 			if type(cmd_config) == "table" then
-				-- Single command configuration
 				if cmd_config.name then
 					cfg.register_command(cmd_config)
-				-- Multiple commands in one file
 				elseif vim.islist(cmd_config) then
 					for _, cmd in ipairs(cmd_config) do
 						cfg.register_command(cmd)

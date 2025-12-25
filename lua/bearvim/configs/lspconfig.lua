@@ -154,7 +154,6 @@ return config.create({
 					})
 				end
 
-				-- Handle semantic tokens for Vue files
 				if client and client.name == "vtsls" then
 					if vim.bo.filetype == "vue" then
 						client.server_capabilities.semanticTokensProvider =
@@ -265,9 +264,6 @@ return config.create({
 		})
 
 		vim.lsp.config("lua_ls", {
-			cmd = {
-				"C:/Users/thebe/AppData/Local/nvim-data/mason/bin/lua-language-server.cmd",
-			},
 			settings = {
 				Lua = {
 					runtime = {
@@ -306,8 +302,6 @@ return config.create({
 			},
 		})
 
-		-- Configure vtsls with Vue support and inlay hints
-		-- IMPORTANT: Enable vue_ls in the on_attach callback
 		vim.lsp.config("vtsls", {
 			filetypes = tsserver_filetypes,
 			settings = {
@@ -340,14 +334,12 @@ return config.create({
 				},
 			},
 			on_attach = function(client, bufnr)
-				-- Enable vue_ls after vtsls is attached
 				vim.schedule(function()
 					vim.lsp.enable({ "vue_ls" })
 				end)
 			end,
 		})
 
-		-- Configure Vue language server with inlay hints
 		vim.lsp.config("vue_ls", {
 			cmd = { "vue-language-server", "--stdio" },
 			filetypes = { "vue" },
@@ -435,8 +427,11 @@ return config.create({
 			},
 		})
 
-		-- Enable vtsls first, which will then enable vue_ls in its on_attach
-		-- Do NOT enable vue_ls here
+		vim.lsp.config("nu", {
+			cmd = { "nu", "--lsp" },
+			filetypes = { "nu" },
+		})
+
 		vim.lsp.enable({
 			"gleam",
 			"vtsls",
@@ -444,6 +439,8 @@ return config.create({
 			"cssls",
 			"eslint",
 			"clangd",
+			"nu",
+			"lua-language-server",
 		})
 	end,
 })

@@ -27,6 +27,11 @@ return config.create({
 			["<Down>"] = { "select_next", "fallback" },
 			["<C-k>"] = { "select_prev", "fallback" },
 			["<C-j>"] = { "select_next", "fallback" },
+			["<C-g>"] = {
+				function()
+					require("blink-cmp").show({ providers = { "ripgrep" } })
+				end,
+			},
 		},
 
 		appearance = {
@@ -35,7 +40,15 @@ return config.create({
 		},
 
 		sources = {
-			default = { "lazydev", "lsp", "path", "snippets", "buffer" },
+			default = {
+				"lazydev",
+				"lsp",
+				"path",
+				"snippets",
+				"buffer",
+				"ripgrep",
+				"nerdfont",
+			},
 			providers = {
 				lazydev = {
 					name = "LazyDev",
@@ -76,12 +89,25 @@ return config.create({
 					opts = {
 						trailing_slash = false,
 						label_trailing_slash = true,
+						show_hidden_files_by_default = true,
 						get_cwd = function(context)
 							return vim.fn.expand(
 								("#%d:p:h"):format(context.bufnr)
 							)
 						end,
-						show_hidden_files_by_default = false,
+					},
+				},
+				ripgrep = {
+					name = "rg",
+					module = "blink-ripgrep",
+					opts = {},
+				},
+				nerdfont = {
+					module = "blink-nerdfont",
+					name = "Nerd Fonts",
+					score_offset = 15,
+					opts = {
+						insert = true,
 					},
 				},
 			},
@@ -133,7 +159,7 @@ return config.create({
 		},
 
 		fuzzy = {
-			implementation = "prefer_rust",
+			implementation = "rust",
 		},
 	},
 
@@ -155,6 +181,7 @@ return config.create({
 			{ "<C-y>", desc = "Accept Completion", mode = "i" },
 			{ "<C-b>", desc = "Scroll Docs Up", mode = "i" },
 			{ "<C-f>", desc = "Scroll Docs Down", mode = "i" },
+			{ "<C-g>", desc = "Ripgrep search", mode = "i" },
 			{ "<Tab>", desc = "Next Snippet", mode = "i" },
 			{ "<S-Tab>", desc = "Previous Snippet", mode = "i" },
 		})
