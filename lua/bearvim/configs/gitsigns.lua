@@ -22,6 +22,12 @@ return config.create({
 		numhl = true,
 		linehl = true,
 		word_diff = true,
+		watch_gitdir = {
+			follow_files = true,
+		},
+		auto_attach = true,
+		attach_to_untracked = false,
+		current_line_blame = true,
 	},
 
 	--- @param opts Gitsigns.Config
