@@ -80,36 +80,6 @@ return config.create({
 					},
 				})
 
-				keys.register({
-					{
-						"<leader>D",
-						function()
-							require("telescope.builtin").lsp_type_definitions()
-						end,
-						desc = "Type [D]efinition",
-					},
-					{
-						"<leader>ds",
-						function()
-							require("telescope.builtin").lsp_document_symbols()
-						end,
-						desc = "[D]ocument [S]ymbols",
-					},
-					{
-						"<leader>ws",
-						function()
-							require("telescope.builtin").lsp_dynamic_workspace_symbols()
-						end,
-						desc = "[W]orkspace [S]ymbols",
-					},
-					{ "<leader>rn", vim.lsp.buf.rename, desc = "[R]e[n]ame" },
-					{
-						"<leader>ca",
-						vim.lsp.buf.code_action,
-						desc = "[C]ode [A]ction",
-					},
-				})
-
 				if
 					client
 					and client.server_capabilities.documentHighlightProvider
@@ -156,6 +126,7 @@ return config.create({
 
 				if client and client.name == "vtsls" then
 					if vim.bo.filetype == "vue" then
+						--- @diagnostic disable-next-line: assign-type-mismatch
 						client.server_capabilities.semanticTokensProvider =
 							false
 					else
@@ -441,6 +412,36 @@ return config.create({
 			"clangd",
 			"nu",
 			"lua-language-server",
+		})
+
+		keys.register({
+			{
+				"<leader>D",
+				function()
+					require("telescope.builtin").lsp_type_definitions()
+				end,
+				desc = "Type [D]efinition",
+			},
+			{
+				"<leader>ds",
+				function()
+					require("telescope.builtin").lsp_document_symbols()
+				end,
+				desc = "[D]ocument [S]ymbols",
+			},
+			{
+				"<leader>ws",
+				function()
+					require("telescope.builtin").lsp_dynamic_workspace_symbols()
+				end,
+				desc = "[W]orkspace [S]ymbols",
+			},
+			{ "<leader>rn", vim.lsp.buf.rename, desc = "[R]e[n]ame" },
+			{
+				"<leader>ca",
+				vim.lsp.buf.code_action,
+				desc = "[C]ode [A]ction",
+			},
 		})
 	end,
 })

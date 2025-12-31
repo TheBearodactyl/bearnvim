@@ -8,6 +8,12 @@ return {
 	}),
 
 	plugin.spec({
+		"lewis6991/gitsigns.nvim",
+		setup = require("bearvim.configs.gitsigns").setup,
+		opts = require("bearvim.configs.gitsigns").options,
+	}),
+
+	plugin.spec({
 		"romgrk/barbar.nvim",
 		dependencies = {
 			"lewis6991/gitsigns.nvim",

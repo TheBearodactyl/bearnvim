@@ -36,7 +36,16 @@ return config.create({
 			path_display = { "truncate" },
 			winblend = 0,
 			border = {},
-			borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+			borderchars = {
+				"─",
+				"│",
+				"─",
+				"│",
+				"╭",
+				"╮",
+				"╯",
+				"╰",
+			},
 			color_devicons = true,
 			set_env = { ["COLORTERM"] = "truecolor" },
 			file_previewer = require("telescope.previewers").vim_buffer_cat.new,
@@ -49,7 +58,13 @@ return config.create({
 		},
 		pickers = {
 			find_files = {
-				find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+				find_command = {
+					"rg",
+					"--files",
+					"--hidden",
+					"--glob",
+					"!**/.git/*",
+				},
 				theme = "dropdown",
 				previewer = false,
 			},
@@ -114,9 +129,21 @@ return config.create({
 				"<cmd>Telescope oldfiles<cr>",
 				desc = "[F]ind [R]ecent Files",
 			},
-			{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "[F]ind [B]uffers" },
-			{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "[F]ind [H]elp" },
-			{ "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "[F]ind [K]eymaps" },
+			{
+				"<leader>fb",
+				"<cmd>Telescope buffers<cr>",
+				desc = "[F]ind [B]uffers",
+			},
+			{
+				"<leader>fh",
+				"<cmd>Telescope help_tags<cr>",
+				desc = "[F]ind [H]elp",
+			},
+			{
+				"<leader>fk",
+				"<cmd>Telescope keymaps<cr>",
+				desc = "[F]ind [K]eymaps",
+			},
 			{
 				"<leader>fd",
 				"<cmd>Telescope diagnostics<cr>",
@@ -137,7 +164,11 @@ return config.create({
 				"<cmd>Telescope command_history<cr>",
 				desc = "[F]ind [C]ommand History",
 			},
-			{ "<leader>fm", "<cmd>Telescope marks<cr>", desc = "[F]ind [M]arks" },
+			{
+				"<leader>fm",
+				"<cmd>Telescope marks<cr>",
+				desc = "[F]ind [M]arks",
+			},
 			{
 				"<leader>fj",
 				"<cmd>Telescope jumplist<cr>",

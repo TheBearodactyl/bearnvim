@@ -22,4 +22,10 @@ return {
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = { signs = false },
 	}),
+
+	plugin.spec({
+		"aznhe21/actions-preview.nvim",
+		opts = require("bearvim.configs.actions_preview").options,
+		setup = require("bearvim.configs.actions_preview").setup,
+	}),
 }

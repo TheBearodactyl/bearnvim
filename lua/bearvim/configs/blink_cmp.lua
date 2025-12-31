@@ -100,12 +100,13 @@ return config.create({
 				ripgrep = {
 					name = "rg",
 					module = "blink-ripgrep",
+					score_offset = -150,
 					opts = {},
 				},
 				nerdfont = {
 					module = "blink-nerdfont",
 					name = "Nerd Fonts",
-					score_offset = 15,
+					score_offset = -15,
 					opts = {
 						insert = true,
 					},
