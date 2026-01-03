@@ -20,7 +20,7 @@ return config.create({
 		},
 		signcolumn = true,
 		numhl = true,
-		linehl = true,
+		linehl = false,
 		word_diff = true,
 		watch_gitdir = {
 			follow_files = true,
